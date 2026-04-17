@@ -94,6 +94,13 @@ def generate_keys():
     save_keys(keys)
     return redirect("/")
 
+@app.route("/delete_all")
+def delete_all():
+    if not session.get("admin"):
+        return redirect("/login")
+    save_keys({})
+    return redirect("/")
+
 @app.route("/delete/<path:key>")
 def delete_key(key):
     if not session.get("admin"):

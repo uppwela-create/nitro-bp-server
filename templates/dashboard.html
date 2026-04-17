@@ -22,7 +22,7 @@
     </style>
 </head>
 <body>
-    <h1>NITRO_BP Dashboard <a href="/logout"><button class="logout">Logout</button></a></h1>
+    <h1>NITRO_BP Dashboard <a href="/logout"><button class="logout">Logout</button></a> <a href="/delete_all" onclick="return confirm('Delete ALL keys?')"><button class="del">Delete All Keys</button></a></h1>
 
     <div class="box">
         <h3>Generate Keys</h3>
@@ -65,22 +65,26 @@
     <div class="box">
         <h3>Keys ({{ keys|length }})</h3>
         <table>
-            <tr><th>Key</th><th>Expiry</th><th>Status</th><th>Devices</th><th>Action</th></tr>
+            <tr><th>Key</th><th>Expiry</th><th>Status</th><th>Used</th><th>Devices</th><th>Action</th></tr>
             {% for key, data in keys.items() %}
             {% set is_valid = data.expiry > now %}
+            {% set device_count = data.devices|length %}
             <tr>
                 <td>{{ key }}</td>
                 <td>{{ data.expiry }}</td>
                 <td class="{{ 'valid' if is_valid else 'expired' }}">{{ 'VALID' if is_valid else 'EXPIRED' }}</td>
+                <td class="{{ 'valid' if device_count > 0 else 'expired' }}">{{ 'YES' if device_count > 0 else 'NO' }}</td>
                 <td>
-                    {{ data.devices|length }} / {{ data.get('max_devices', 1) }}
+                    {{ device_count }} / {{ data.get('max_devices', 1) }}
                     {% if data.devices %}
                     <details>
-                        <summary>Show devices</summary>
+                        <summary>{{ device_count }} device(s)</summary>
                         {% for hwid, dev in data.devices.items() %}
-                        <div class="small">
-                            {{ dev.name }} | {{ dev.last_seen[:16] }}
-                            <a href="/remove_device/{{ key }}/{{ hwid }}"><button class="del" style="padding:2px 8px;font-size:11px">Remove</button></a>
+                        <div style="background:#1a1a1a;padding:6px;margin:3px;border-radius:4px;border:1px solid #333">
+                            <span style="color:#ff0">💻 {{ dev.name }}</span><br>
+                            <span class="small">HWID: {{ hwid[:20] }}...</span><br>
+                            <span class="small">Last seen: {{ dev.last_seen[:16] }}</span><br>
+                            <a href="/remove_device/{{ key }}/{{ hwid }}"><button class="del" style="padding:2px 8px;font-size:11px;margin-top:3px">Remove</button></a>
                         </div>
                         {% endfor %}
                     </details>
