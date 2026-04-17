@@ -35,7 +35,8 @@ def dashboard():
     if not session.get("admin"):
         return redirect("/login")
     keys = load_keys()
-    return render_template("dashboard.html", keys=keys)
+    now = datetime.now().isoformat()
+    return render_template("dashboard.html", keys=keys, now=now)
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
