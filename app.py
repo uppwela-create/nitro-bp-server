@@ -1,22 +1,25 @@
 from flask import Flask, request, jsonify, render_template, redirect, session
 from datetime import datetime, timedelta
-import json, os, secrets, string, random
+import os, secrets, string, random, json
 
 app = Flask(__name__)
 app.secret_key = secrets.token_hex(16)
 
 ADMIN_PASSWORD = "BEBO2026"
-KEYS_FILE = "keys.json"
+
+# Redis
+import redis
+REDIS_URL = os.environ.get("REDIS_URL", "redis://localhost:6379")
+r = redis.from_url(REDIS_URL, decode_responses=True)
 
 def load_keys():
-    if not os.path.exists(KEYS_FILE):
+    data = r.get("keys")
+    if not data:
         return {}
-    with open(KEYS_FILE) as f:
-        return json.load(f)
+    return json.loads(data)
 
 def save_keys(keys):
-    with open(KEYS_FILE, "w") as f:
-        json.dump(keys, f, indent=2)
+    r.set("keys", json.dumps(keys))
 
 def gen_key():
     chars = string.ascii_uppercase + string.digits
