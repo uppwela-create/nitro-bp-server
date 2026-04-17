@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>NITRO_BP Login</title>
+    <style>
+        body { background: #0a0a0a; color: #00ffff; font-family: monospace; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .box { background: #111; border: 1px solid #00ffff; padding: 40px; border-radius: 8px; text-align: center; }
+        h1 { color: #ff00ff; }
+        input { background: #222; border: 1px solid #00ffff; color: #fff; padding: 10px; margin: 10px 0; width: 200px; border-radius: 4px; }
+        button { background: #00ffff; color: #000; border: none; padding: 10px 30px; cursor: pointer; border-radius: 4px; font-weight: bold; }
+        .error { color: #ff4444; }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h1>NITRO_BP</h1>
+        <h3>ADMIN LOGIN</h3>
+        <form method="POST">
+            <input type="password" name="password" placeholder="Password"><br>
+            <button type="submit">LOGIN</button>
+        </form>
+        <p class="error">{{ error }}</p>
+    </div>
+</body>
+</html>

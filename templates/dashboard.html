@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>NITRO_BP Dashboard</title>
+    <style>
+        body { background: #0a0a0a; color: #00ffff; font-family: monospace; padding: 20px; }
+        h1 { color: #ff00ff; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #333; padding: 10px; text-align: left; }
+        th { background: #111; color: #ff00ff; }
+        .expired { color: #ff4444; }
+        .valid { color: #00ff88; }
+        input { background: #222; border: 1px solid #00ffff; color: #fff; padding: 8px; border-radius: 4px; }
+        button { background: #00ffff; color: #000; border: none; padding: 8px 20px; cursor: pointer; border-radius: 4px; font-weight: bold; margin: 5px; }
+        .del { background: #ff4444; color: #fff; }
+        .logout { float: right; background: #333; color: #fff; }
+        .form-box { background: #111; border: 1px solid #333; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <h1>NITRO_BP Dashboard <a href="/logout"><button class="logout">Logout</button></a></h1>
+
+    <div class="form-box">
+        <h3>Add Key</h3>
+        <form method="POST" action="/add">
+            <input type="text" name="key" placeholder="Key (e.g. NITRO-XXXX)" required>
+            <input type="datetime-local" name="expiry" required>
+            <button type="submit">Add</button>
+        </form>
+    </div>
+
+    <table>
+        <tr><th>Key</th><th>Expiry</th><th>Status</th><th>Action</th></tr>
+        {% for key, data in keys.items() %}
+        {% set exp = data.expiry %}
+        <tr>
+            <td>{{ key }}</td>
+            <td>{{ exp }}</td>
+            <td class="{{ 'valid' if exp > now else 'expired' }}">{{ 'VALID' if exp > now else 'EXPIRED' }}</td>
+            <td><a href="/delete/{{ key }}"><button class="del">Delete</button></a></td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
