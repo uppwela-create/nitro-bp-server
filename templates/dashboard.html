@@ -27,9 +27,18 @@
     <div class="box">
         <h3>Generate Keys</h3>
         <form method="POST" action="/generate">
-            <input type="number" name="count" placeholder="Count (1-100)" min="1" max="100" value="1" style="width:120px">
-            <input type="number" name="days" placeholder="Days" min="1" value="30" style="width:80px">
-            <input type="number" name="max_devices" placeholder="Max Devices" min="1" value="1" style="width:100px">
+            <div style="display:inline-block;text-align:center;margin:5px">
+                <div class="small" style="color:#00ffff;margin-bottom:3px">Count (1-100)</div>
+                <input type="number" name="count" min="1" max="100" value="1" style="width:120px">
+            </div>
+            <div style="display:inline-block;text-align:center;margin:5px">
+                <div class="small" style="color:#00ffff;margin-bottom:3px">Days</div>
+                <input type="number" name="days" min="1" value="30" style="width:80px">
+            </div>
+            <div style="display:inline-block;text-align:center;margin:5px">
+                <div class="small" style="color:#00ffff;margin-bottom:3px">Max Devices</div>
+                <input type="number" name="max_devices" min="1" value="1" style="width:100px">
+            </div>
             <button type="submit">Generate</button>
         </form>
     </div>
@@ -37,9 +46,18 @@
     <div class="box">
         <h3>Add Single Key</h3>
         <form method="POST" action="/add">
-            <input type="text" name="key" placeholder="Key name" required>
-            <input type="datetime-local" name="expiry" required>
-            <input type="number" name="max_devices" placeholder="Max Devices" min="1" value="1" style="width:100px">
+            <div style="display:inline-block;text-align:center;margin:5px">
+                <div class="small" style="color:#00ffff;margin-bottom:3px">Key Name</div>
+                <input type="text" name="key" required>
+            </div>
+            <div style="display:inline-block;text-align:center;margin:5px">
+                <div class="small" style="color:#00ffff;margin-bottom:3px">Expiry</div>
+                <input type="datetime-local" name="expiry" required>
+            </div>
+            <div style="display:inline-block;text-align:center;margin:5px">
+                <div class="small" style="color:#00ffff;margin-bottom:3px">Max Devices</div>
+                <input type="number" name="max_devices" min="1" value="1" style="width:100px">
+            </div>
             <button type="submit">Add</button>
         </form>
     </div>
