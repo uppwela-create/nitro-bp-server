@@ -6,20 +6,17 @@ app = Flask(__name__)
 app.secret_key = secrets.token_hex(16)
 
 ADMIN_PASSWORD = "BEBO2026"
-
-# Redis
-import redis
-REDIS_URL = os.environ.get("REDIS_URL", "redis://localhost:6379")
-r = redis.from_url(REDIS_URL, decode_responses=True)
+KEYS_FILE = "/tmp/keys.json"
 
 def load_keys():
-    data = r.get("keys")
-    if not data:
+    if not os.path.exists(KEYS_FILE):
         return {}
-    return json.loads(data)
+    with open(KEYS_FILE) as f:
+        return json.load(f)
 
 def save_keys(keys):
-    r.set("keys", json.dumps(keys))
+    with open(KEYS_FILE, "w") as f:
+        json.dump(keys, f, indent=2)
 
 def gen_key():
     chars = string.ascii_uppercase + string.digits
