@@ -11,25 +11,42 @@
         th { background: #111; color: #ff00ff; }
         .expired { color: #ff4444; }
         .valid { color: #00ff88; }
+        .disabled { color: #ff8800; }
         input, select { background: #222; border: 1px solid #00ffff; color: #fff; padding: 7px; border-radius: 4px; margin: 3px; }
-        button { background: #00ffff; color: #000; border: none; padding: 8px 18px; cursor: pointer; border-radius: 4px; font-weight: bold; margin: 3px; }
+        button { background: #00ffff; color: #000; border: none; padding: 6px 14px; cursor: pointer; border-radius: 4px; font-weight: bold; margin: 2px; font-size: 12px; }
         .del { background: #ff4444; color: #fff; }
+        .tog-off { background: #ff8800; color: #fff; }
+        .tog-on { background: #00ff88; color: #000; }
         .logout { float: right; background: #333; color: #fff; }
         .box { background: #111; border: 1px solid #333; padding: 15px; border-radius: 8px; margin-bottom: 15px; }
         .small { font-size: 11px; color: #888; }
         details { margin-top: 5px; }
         summary { cursor: pointer; color: #93c; }
+        .copy-btn { background: #555; color: #fff; }
+        #copy-area { background: #111; border: 1px solid #333; padding: 10px; border-radius: 4px; margin-top: 10px; white-space: pre; font-size: 12px; display: none; }
     </style>
+    <script>
+        function copyKeys() {
+            const rows = document.querySelectorAll('.key-val');
+            const keys = Array.from(rows).map(r => r.textContent).join('\n');
+            navigator.clipboard.writeText(keys);
+            alert('Keys copied!');
+        }
+        function toggleCopyArea() {
+            const area = document.getElementById('copy-area');
+            area.style.display = area.style.display === 'none' ? 'block' : 'none';
+        }
+    </script>
 </head>
 <body>
-    <h1>NITRO_BP Dashboard <a href="/logout"><button class="logout">Logout</button></a> <a href="/delete_all" onclick="return confirm('Delete ALL keys?')"><button class="del">Delete All Keys</button></a></h1>
+    <h1>NITRO_BP Dashboard <a href="/logout"><button class="logout">Logout</button></a> <a href="/delete_all" onclick="return confirm('Delete ALL keys?')"><button class="del">Delete All</button></a> <button class="copy-btn" onclick="copyKeys()">Copy All Keys</button></h1>
 
     <div class="box">
         <h3>Generate Keys</h3>
         <form method="POST" action="/generate">
             <div style="display:inline-block;text-align:center;margin:5px">
                 <div class="small" style="color:#00ffff;margin-bottom:3px">Count (1-100)</div>
-                <input type="number" name="count" min="1" max="100" value="1" style="width:120px">
+                <input type="number" name="count" min="1" max="100" value="1" style="width:100px">
             </div>
             <div style="display:inline-block;text-align:center;margin:5px">
                 <div class="small" style="color:#00ffff;margin-bottom:3px">Days</div>
@@ -37,10 +54,12 @@
             </div>
             <div style="display:inline-block;text-align:center;margin:5px">
                 <div class="small" style="color:#00ffff;margin-bottom:3px">Max Devices</div>
-                <input type="number" name="max_devices" min="1" value="1" style="width:100px">
+                <input type="number" name="max_devices" min="1" value="1" style="width:80px">
             </div>
             <button type="submit">Generate</button>
         </form>
+        <div id="copy-area">{% for key, data in keys.items() %}<span class="key-val">{{ key }}</span>
+{% endfor %}</div>
     </div>
 
     <div class="box">
@@ -56,7 +75,7 @@
             </div>
             <div style="display:inline-block;text-align:center;margin:5px">
                 <div class="small" style="color:#00ffff;margin-bottom:3px">Max Devices</div>
-                <input type="number" name="max_devices" min="1" value="1" style="width:100px">
+                <input type="number" name="max_devices" min="1" value="1" style="width:80px">
             </div>
             <button type="submit">Add</button>
         </form>
@@ -65,14 +84,20 @@
     <div class="box">
         <h3>Keys ({{ keys|length }})</h3>
         <table>
-            <tr><th>Key</th><th>Expiry</th><th>Status</th><th>Used</th><th>Devices</th><th>Action</th></tr>
+            <tr><th>Key</th><th>Expiry</th><th>Status</th><th>Used</th><th>Devices</th><th>Extend/Reduce</th><th>Action</th></tr>
             {% for key, data in keys.items() %}
-            {% set is_valid = data.expiry > now %}
+            {% set is_disabled = data.get('disabled', False) %}
+            {% set is_valid = data.expiry > now and not is_disabled %}
             {% set device_count = data.devices|length %}
             <tr>
-                <td>{{ key }}</td>
+                <td>
+                    <span class="key-val">{{ key }}</span>
+                    <button class="copy-btn" onclick="navigator.clipboard.writeText('{{ key }}')">Copy</button>
+                </td>
                 <td>{{ data.expiry }}</td>
-                <td class="{{ 'valid' if is_valid else 'expired' }}">{{ 'VALID' if is_valid else 'EXPIRED' }}</td>
+                <td class="{{ 'disabled' if is_disabled else ('valid' if is_valid else 'expired') }}">
+                    {{ 'DISABLED' if is_disabled else ('VALID' if is_valid else 'EXPIRED') }}
+                </td>
                 <td class="{{ 'valid' if device_count > 0 else 'expired' }}">{{ 'YES' if device_count > 0 else 'NO' }}</td>
                 <td>
                     {{ device_count }} / {{ data.get('max_devices', 1) }}
@@ -82,7 +107,6 @@
                         {% for hwid, dev in data.devices.items() %}
                         <div style="background:#1a1a1a;padding:6px;margin:3px;border-radius:4px;border:1px solid #333">
                             <span style="color:#ff0">💻 {{ dev.name }}</span><br>
-                            <span class="small">HWID: {{ hwid[:20] }}...</span><br>
                             <span class="small">Last seen: {{ dev.last_seen[:16] }}</span><br>
                             <a href="/remove_device/{{ key }}/{{ hwid }}"><button class="del" style="padding:2px 8px;font-size:11px;margin-top:3px">Remove</button></a>
                         </div>
@@ -90,7 +114,16 @@
                     </details>
                     {% endif %}
                 </td>
-                <td><a href="/delete/{{ key }}"><button class="del">Delete</button></a></td>
+                <td>
+                    <form method="POST" action="/extend/{{ key }}" style="display:inline">
+                        <input type="number" name="days" placeholder="days" style="width:60px;padding:4px">
+                        <button type="submit">+/-</button>
+                    </form>
+                </td>
+                <td>
+                    <a href="/toggle/{{ key }}"><button class="{{ 'tog-on' if is_disabled else 'tog-off' }}">{{ 'Enable' if is_disabled else 'Disable' }}</button></a>
+                    <a href="/delete/{{ key }}"><button class="del">Delete</button></a>
+                </td>
             </tr>
             {% endfor %}
         </table>

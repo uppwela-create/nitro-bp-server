@@ -35,6 +35,8 @@ def check_key():
     expiry = datetime.fromisoformat(k["expiry"])
     if datetime.now() > expiry:
         return jsonify({"valid": False, "message": "Key expired"})
+    if k.get("disabled", False):
+        return jsonify({"valid": False, "message": "Key disabled"})
     max_devices = k.get("max_devices", 1)
     devices = k.get("devices", {})
     if hwid not in devices and len(devices) >= max_devices:
@@ -92,6 +94,29 @@ def generate_keys():
         key = gen_key()
         keys[key] = {"expiry": expiry, "max_devices": max_devices, "devices": {}}
     save_keys(keys)
+    return redirect("/")
+
+@app.route("/toggle/<path:key>")
+def toggle_key(key):
+    if not session.get("admin"):
+        return redirect("/login")
+    keys = load_keys()
+    if key in keys:
+        keys[key]["disabled"] = not keys[key].get("disabled", False)
+        save_keys(keys)
+    return redirect("/")
+
+@app.route("/extend/<path:key>", methods=["POST"])
+def extend_key(key):
+    if not session.get("admin"):
+        return redirect("/login")
+    keys = load_keys()
+    if key in keys:
+        days = int(request.form.get("days", 0))
+        expiry = datetime.fromisoformat(keys[key]["expiry"])
+        expiry = expiry + timedelta(days=days)
+        keys[key]["expiry"] = expiry.isoformat()[:16]
+        save_keys(keys)
     return redirect("/")
 
 @app.route("/delete_all")
