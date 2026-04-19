@@ -22,6 +22,32 @@ def gen_key():
     chars = string.ascii_uppercase + string.digits
     return "NITRO-" + "".join(random.choices(chars, k=4)) + "-" + "".join(random.choices(chars, k=4)) + "-" + "".join(random.choices(chars, k=4))
 
+@app.route("/public/connect", methods=["POST"])
+def public_connect():
+    import hashlib, time
+    user_key = request.form.get("user_key", "")
+    serial = request.form.get("serial", "unknown")
+    keys = load_keys()
+    if user_key not in keys:
+        return jsonify({"status": False, "reason": "Invalid key"})
+    k = keys[user_key]
+    expiry = datetime.fromisoformat(k["expiry"])
+    if datetime.now() > expiry:
+        return jsonify({"status": False, "reason": "Key expired"})
+    if k.get("disabled", False):
+        return jsonify({"status": False, "reason": "Key disabled"})
+    max_devices = k.get("max_devices", 1)
+    devices = k.get("devices", {})
+    if serial not in devices and len(devices) >= max_devices:
+        return jsonify({"status": False, "reason": f"Max devices reached ({max_devices})"})
+    devices[serial] = {"last_seen": datetime.now().isoformat()}
+    keys[user_key]["devices"] = devices
+    save_keys(keys)
+    rng = int(time.time())
+    auth = "PUBG-" + user_key + "-" + serial + "-" + "Vm8Lk7Uj2JmsjCPVPVjrLa7zgfx3uz9E"
+    token = hashlib.md5(auth.encode()).hexdigest()
+    return jsonify({"status": True, "data": {"token": token, "EXP": k["expiry"], "rng": rng}})
+
 @app.route("/check", methods=["POST"])
 def check_key():
     data = request.json
