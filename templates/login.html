@@ -1,25 +1,288 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>NITRO_BP Login</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NITRO_BP | Access</title>
     <style>
-        body { background: #0a0a0a; color: #00ffff; font-family: monospace; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .box { background: #111; border: 1px solid #00ffff; padding: 40px; border-radius: 8px; text-align: center; }
-        h1 { color: #ff00ff; }
-        input { background: #222; border: 1px solid #00ffff; color: #fff; padding: 10px; margin: 10px 0; width: 200px; border-radius: 4px; }
-        button { background: #00ffff; color: #000; border: none; padding: 10px 30px; cursor: pointer; border-radius: 4px; font-weight: bold; }
-        .error { color: #ff4444; }
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: #000;
+            color: #fff;
+            font-family: 'Share Tech Mono', monospace;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        /* animated grid background */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(168,0,255,0.07) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(168,0,255,0.07) 1px, transparent 1px);
+            background-size: 40px 40px;
+            animation: gridMove 20s linear infinite;
+            z-index: 0;
+        }
+
+        @keyframes gridMove {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(40px); }
+        }
+
+        /* glow orbs */
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.25;
+            z-index: 0;
+            animation: pulse 6s ease-in-out infinite;
+        }
+        .orb1 { width: 400px; height: 400px; background: #a800ff; top: -100px; left: -100px; }
+        .orb2 { width: 300px; height: 300px; background: #ff0080; bottom: -80px; right: -80px; animation-delay: 3s; }
+        .orb3 { width: 200px; height: 200px; background: #00d4ff; top: 50%; left: 50%; animation-delay: 1.5s; }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.25; }
+            50% { transform: scale(1.2); opacity: 0.35; }
+        }
+
+        .login-wrap {
+            position: relative;
+            z-index: 1;
+            width: 420px;
+        }
+
+        /* top bar */
+        .top-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+            font-size: 11px;
+            color: #a800ff;
+            letter-spacing: 3px;
+        }
+        .top-bar::before, .top-bar::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #a800ff);
+        }
+        .top-bar::after { background: linear-gradient(90deg, #a800ff, transparent); }
+
+        .box {
+            background: rgba(10, 0, 20, 0.85);
+            border: 1px solid rgba(168, 0, 255, 0.4);
+            border-radius: 16px;
+            padding: 45px 40px;
+            backdrop-filter: blur(20px);
+            box-shadow:
+                0 0 40px rgba(168,0,255,0.15),
+                0 0 80px rgba(168,0,255,0.05),
+                inset 0 1px 0 rgba(255,255,255,0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* corner accents */
+        .box::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 60px; height: 60px;
+            border-top: 2px solid #a800ff;
+            border-left: 2px solid #a800ff;
+            border-radius: 16px 0 0 0;
+        }
+        .box::after {
+            content: '';
+            position: absolute;
+            bottom: 0; right: 0;
+            width: 60px; height: 60px;
+            border-bottom: 2px solid #ff0080;
+            border-right: 2px solid #ff0080;
+            border-radius: 0 0 16px 0;
+        }
+
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 36px;
+            font-weight: 900;
+            text-align: center;
+            margin-bottom: 4px;
+            background: linear-gradient(135deg, #a800ff, #ff0080, #00d4ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 4px;
+            text-shadow: none;
+            filter: drop-shadow(0 0 20px rgba(168,0,255,0.5));
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 11px;
+            color: #666;
+            letter-spacing: 4px;
+            margin-bottom: 35px;
+        }
+
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(168,0,255,0.5), transparent);
+            margin-bottom: 30px;
+        }
+
+        .field-label {
+            font-size: 10px;
+            color: #a800ff;
+            letter-spacing: 3px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .input-wrap {
+            position: relative;
+            margin-bottom: 25px;
+        }
+
+        .input-wrap input {
+            width: 100%;
+            background: rgba(168,0,255,0.05);
+            border: 1px solid rgba(168,0,255,0.3);
+            color: #fff;
+            padding: 14px 16px 14px 45px;
+            border-radius: 8px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.3s;
+            letter-spacing: 2px;
+        }
+
+        .input-wrap input:focus {
+            border-color: #a800ff;
+            background: rgba(168,0,255,0.1);
+            box-shadow: 0 0 20px rgba(168,0,255,0.2);
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a800ff;
+            font-size: 16px;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #a800ff, #7000cc);
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-login::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-login:hover::before { left: 100%; }
+        .btn-login:hover {
+            box-shadow: 0 0 30px rgba(168,0,255,0.5);
+            transform: translateY(-1px);
+        }
+        .btn-login:active { transform: translateY(0); }
+
+        .error {
+            color: #ff0080;
+            font-size: 11px;
+            text-align: center;
+            margin-top: 15px;
+            letter-spacing: 2px;
+            min-height: 16px;
+        }
+
+        .bottom-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 6px;
+            font-size: 10px;
+            color: #333;
+            letter-spacing: 2px;
+        }
+        .bottom-bar::before, .bottom-bar::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #222);
+        }
+        .bottom-bar::after { background: linear-gradient(90deg, #222, transparent); }
+
+        /* scanline effect */
+        .scanline {
+            position: fixed;
+            inset: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0,0,0,0.03) 2px,
+                rgba(0,0,0,0.03) 4px
+            );
+            pointer-events: none;
+            z-index: 2;
+        }
     </style>
 </head>
 <body>
-    <div class="box">
-        <h1>NITRO_BP</h1>
-        <h3>ADMIN LOGIN</h3>
-        <form method="POST">
-            <input type="password" name="password" placeholder="Password"><br>
-            <button type="submit">LOGIN</button>
-        </form>
-        <p class="error">{{ error }}</p>
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+    <div class="orb orb3"></div>
+    <div class="scanline"></div>
+
+    <div class="login-wrap">
+        <div class="top-bar">SECURE ACCESS</div>
+        <div class="box">
+            <div class="logo">NITRO_BP</div>
+            <div class="subtitle">ADMIN CONTROL PANEL</div>
+            <div class="divider"></div>
+            <form method="POST">
+                <label class="field-label">// PASSWORD</label>
+                <div class="input-wrap">
+                    <span class="input-icon">🔒</span>
+                    <input type="password" name="password" placeholder="Enter access key..." autofocus>
+                </div>
+                <button type="submit" class="btn-login">ACCESS SYSTEM</button>
+            </form>
+            <div class="error">{{ error }}</div>
+        </div>
+        <div class="bottom-bar">NITRO_BP &copy; 2026</div>
     </div>
 </body>
 </html>
