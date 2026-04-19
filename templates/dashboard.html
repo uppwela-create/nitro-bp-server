@@ -1,476 +1,380 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NITRO_BP | Dashboard</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap');
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        :root {
-            --purple: #b000ff;
-            --pink: #ff0080;
-            --cyan: #00eeff;
-            --green: #00ff88;
-            --orange: #ff6600;
-            --red: #ff2244;
-            --yellow: #ffee00;
-        }
-        body {
-            background: #000;
-            color: #e0e0e0;
-            font-family: 'Share Tech Mono', monospace;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-        /* PARTICLES CANVAS */
-        #particles { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NITRO_BP | Dashboard</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --w:#ffffff;--w2:rgba(255,255,255,0.85);--w3:rgba(255,255,255,0.5);
+  --w4:rgba(255,255,255,0.15);--w5:rgba(255,255,255,0.07);
+  --accent:#ffffff;--glow:rgba(255,255,255,0.6);
+  --bg:#000;--bg2:rgba(8,8,8,0.92);--border:rgba(255,255,255,0.12);
+}
+body{background:#000;color:#fff;font-family:'Share Tech Mono',monospace;min-height:100vh;overflow-x:hidden;}
 
-        /* GRID */
-        .grid-bg {
-            position: fixed; inset: 0; z-index: 0; pointer-events: none;
-            background-image:
-                linear-gradient(rgba(176,0,255,0.06) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(176,0,255,0.06) 1px, transparent 1px);
-            background-size: 50px 50px;
-            animation: gridPan 30s linear infinite;
-        }
-        @keyframes gridPan { to { background-position: 50px 50px; } }
+/* BG */
+#particles{position:fixed;inset:0;z-index:0;pointer-events:none;}
+.grid-bg{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(255,255,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.03) 1px,transparent 1px);
+  background-size:60px 60px;animation:gridPan 40s linear infinite;
+}
+@keyframes gridPan{to{background-position:60px 60px;}}
+.scanline{position:fixed;inset:0;z-index:999;pointer-events:none;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(255,255,255,0.012) 3px,rgba(255,255,255,0.012) 4px);}
 
-        /* SCANLINES */
-        .scanline {
-            position: fixed; inset: 0; z-index: 999; pointer-events: none;
-            background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.04) 3px, rgba(0,0,0,0.04) 4px);
-        }
+/* NAVBAR */
+.navbar{
+  position:sticky;top:0;z-index:100;
+  background:rgba(0,0,0,0.96);
+  border-bottom:1px solid var(--border);
+  padding:0 30px;height:64px;
+  display:flex;align-items:center;justify-content:space-between;
+  backdrop-filter:blur(30px);
+}
+.navbar::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.5),rgba(255,255,255,0.8),rgba(255,255,255,0.5),transparent);
+  background-size:200% 100%;animation:borderFlow 4s linear infinite;
+}
+@keyframes borderFlow{to{background-position:200% 0;}}
 
-        /* GLOW ORBS */
-        .orb { position: fixed; border-radius: 50%; filter: blur(100px); opacity: 0.15; z-index: 0; pointer-events: none; animation: orbFloat 8s ease-in-out infinite; }
-        .orb1 { width: 500px; height: 500px; background: var(--purple); top: -200px; left: -200px; }
-        .orb2 { width: 400px; height: 400px; background: var(--pink); bottom: -150px; right: -150px; animation-delay: 4s; }
-        .orb3 { width: 300px; height: 300px; background: var(--cyan); top: 40%; left: 40%; animation-delay: 2s; }
-        @keyframes orbFloat {
-            0%,100% { transform: scale(1) translate(0,0); }
-            33% { transform: scale(1.1) translate(20px,-20px); }
-            66% { transform: scale(0.9) translate(-20px,20px); }
-        }
+.logo{
+  font-family:'Orbitron',sans-serif;font-size:22px;font-weight:900;
+  color:#fff;letter-spacing:5px;
+  text-shadow:0 0 20px rgba(255,255,255,0.8),0 0 40px rgba(255,255,255,0.4),0 0 80px rgba(255,255,255,0.2);
+  animation:logoGlow 3s ease-in-out infinite alternate;
+}
+@keyframes logoGlow{
+  from{text-shadow:0 0 10px rgba(255,255,255,0.5),0 0 20px rgba(255,255,255,0.2);}
+  to{text-shadow:0 0 30px rgba(255,255,255,1),0 0 60px rgba(255,255,255,0.6),0 0 100px rgba(255,255,255,0.3);}
+}
+.logo-sub{font-size:10px;color:#444;letter-spacing:3px;font-family:'Share Tech Mono',monospace;margin-left:10px;}
+.nav-right{display:flex;gap:8px;align-items:center;}
 
-        /* NAVBAR */
-        .navbar {
-            position: sticky; top: 0; z-index: 100;
-            background: rgba(0,0,0,0.92);
-            border-bottom: 1px solid rgba(176,0,255,0.3);
-            padding: 0 30px; height: 64px;
-            display: flex; align-items: center; justify-content: space-between;
-            backdrop-filter: blur(20px);
-            box-shadow: 0 0 40px rgba(176,0,255,0.12), 0 1px 0 rgba(176,0,255,0.2);
-        }
-        .navbar::after {
-            content: '';
-            position: absolute; bottom: 0; left: 0; right: 0; height: 1px;
-            background: linear-gradient(90deg, transparent, var(--purple), var(--pink), var(--cyan), transparent);
-            animation: borderFlow 3s linear infinite;
-            background-size: 200% 100%;
-        }
-        @keyframes borderFlow { to { background-position: 200% 0; } }
+/* CONTAINER */
+.container{padding:25px 30px;max-width:1500px;margin:0 auto;position:relative;z-index:1;}
 
-        .logo {
-            font-family: 'Orbitron', sans-serif; font-size: 22px; font-weight: 900;
-            background: linear-gradient(135deg, var(--purple), var(--pink), var(--cyan));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-            letter-spacing: 4px;
-            filter: drop-shadow(0 0 15px rgba(176,0,255,0.6));
-            animation: logoGlow 2s ease-in-out infinite alternate;
-        }
-        @keyframes logoGlow {
-            from { filter: drop-shadow(0 0 10px rgba(176,0,255,0.4)); }
-            to { filter: drop-shadow(0 0 25px rgba(176,0,255,0.9)) drop-shadow(0 0 50px rgba(255,0,128,0.3)); }
-        }
-        .logo-sub { font-size: 10px; color: #444; letter-spacing: 3px; font-family: 'Share Tech Mono', monospace; margin-left: 10px; -webkit-text-fill-color: #444; }
-        .nav-right { display: flex; gap: 8px; align-items: center; }
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;margin-bottom:25px;}
+.stat-card{
+  background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:26px 22px;
+  position:relative;overflow:hidden;transition:all 0.3s;cursor:default;
+}
+.stat-card:hover{transform:translateY(-6px);border-color:rgba(255,255,255,0.4);box-shadow:0 20px 60px rgba(255,255,255,0.1),0 0 0 1px rgba(255,255,255,0.1);}
+.stat-card::before{
+  content:'';position:absolute;top:0;left:-100%;width:100%;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.8),transparent);
+  animation:scanBar 3s linear infinite;
+}
+.stat-card:nth-child(2)::before{animation-delay:0.75s;}
+.stat-card:nth-child(3)::before{animation-delay:1.5s;}
+.stat-card:nth-child(4)::before{animation-delay:2.25s;}
+@keyframes scanBar{to{left:100%;}}
+.stat-card::after{content:'';position:absolute;top:10px;right:10px;width:5px;height:5px;border-radius:50%;background:#fff;box-shadow:0 0 8px #fff;animation:blink 2s ease-in-out infinite;}
+.stat-card:nth-child(2)::after{animation-delay:0.5s;}
+.stat-card:nth-child(3)::after{animation-delay:1s;}
+.stat-card:nth-child(4)::after{animation-delay:1.5s;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0.1;}}
+.stat-num{font-family:'Orbitron',sans-serif;font-size:40px;font-weight:900;color:#fff;line-height:1;margin-bottom:8px;text-shadow:0 0 20px rgba(255,255,255,0.6);}
+.stat-label{font-size:9px;color:#555;letter-spacing:3px;text-transform:uppercase;font-family:'Orbitron',sans-serif;}
 
-        /* CONTAINER */
-        .container { padding: 25px 30px; max-width: 1500px; margin: 0 auto; position: relative; z-index: 1; }
+/* TABS */
+.tabs{display:flex;gap:0;margin-bottom:20px;border-bottom:1px solid var(--border);position:relative;}
+.tab-btn{
+  padding:14px 28px;background:transparent;border:none;color:#555;
+  font-family:'Orbitron',sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;
+  cursor:pointer;transition:all 0.3s;position:relative;text-transform:uppercase;
+}
+.tab-btn::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:2px;background:#fff;transform:scaleX(0);transition:transform 0.3s;}
+.tab-btn.active{color:#fff;text-shadow:0 0 15px rgba(255,255,255,0.8);}
+.tab-btn.active::after{transform:scaleX(1);}
+.tab-btn:hover{color:#ccc;}
+.tab-content{display:none;}
+.tab-content.active{display:block;}
 
-        /* STATS */
-        .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 25px; }
-        .stat-card {
-            background: rgba(5,0,15,0.85);
-            border: 1px solid rgba(176,0,255,0.2);
-            border-radius: 14px; padding: 24px 20px;
-            position: relative; overflow: hidden;
-            transition: transform 0.3s, box-shadow 0.3s;
-            cursor: default;
-        }
-        .stat-card:hover { transform: translateY(-5px) scale(1.02); }
-        .stat-card:nth-child(1):hover { box-shadow: 0 15px 50px rgba(176,0,255,0.3); border-color: var(--purple); }
-        .stat-card:nth-child(2):hover { box-shadow: 0 15px 50px rgba(0,255,136,0.3); border-color: var(--green); }
-        .stat-card:nth-child(3):hover { box-shadow: 0 15px 50px rgba(255,34,68,0.3); border-color: var(--red); }
-        .stat-card:nth-child(4):hover { box-shadow: 0 15px 50px rgba(0,238,255,0.3); border-color: var(--cyan); }
+/* CARDS */
+.card{
+  background:var(--bg2);border:1px solid var(--border);border-radius:14px;
+  padding:24px;margin-bottom:20px;backdrop-filter:blur(10px);
+  position:relative;overflow:hidden;transition:border-color 0.3s;
+}
+.card:hover{border-color:rgba(255,255,255,0.25);}
+.card::before{
+  content:'';position:absolute;top:0;left:0;width:2px;height:100%;
+  background:linear-gradient(180deg,transparent,rgba(255,255,255,0.6),transparent);
+  animation:sideFlow 4s linear infinite;background-size:100% 200%;
+}
+@keyframes sideFlow{to{background-position:0 200%;}}
+.card-title{
+  font-family:'Orbitron',sans-serif;font-size:11px;color:#fff;font-weight:700;
+  margin-bottom:20px;letter-spacing:3px;display:flex;align-items:center;gap:10px;
+  text-shadow:0 0 10px rgba(255,255,255,0.5);
+}
+.card-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(255,255,255,0.2),transparent);}
 
-        /* animated top border */
-        .stat-card::before {
-            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 2px;
-            animation: scanBar 3s linear infinite;
-        }
-        .stat-card:nth-child(1)::before { background: linear-gradient(90deg, transparent, var(--purple), transparent); }
-        .stat-card:nth-child(2)::before { background: linear-gradient(90deg, transparent, var(--green), transparent); animation-delay: 0.75s; }
-        .stat-card:nth-child(3)::before { background: linear-gradient(90deg, transparent, var(--red), transparent); animation-delay: 1.5s; }
-        .stat-card:nth-child(4)::before { background: linear-gradient(90deg, transparent, var(--cyan), transparent); animation-delay: 2.25s; }
-        @keyframes scanBar { to { left: 100%; } }
+/* FORMS */
+.form-row{display:flex;gap:15px;align-items:flex-end;flex-wrap:wrap;}
+.form-group{display:flex;flex-direction:column;gap:6px;}
+.form-group label{font-size:9px;color:#555;letter-spacing:2px;text-transform:uppercase;font-family:'Orbitron',sans-serif;}
+input[type="text"],input[type="number"],input[type="datetime-local"],input[type="password"]{
+  background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);
+  color:#fff;padding:11px 14px;border-radius:8px;
+  font-family:'Share Tech Mono',monospace;font-size:13px;outline:none;transition:all 0.3s;
+}
+input:focus{border-color:rgba(255,255,255,0.5);background:rgba(255,255,255,0.08);box-shadow:0 0 20px rgba(255,255,255,0.1);}
 
-        /* corner decoration */
-        .stat-card::after {
-            content: ''; position: absolute; top: 8px; right: 8px;
-            width: 6px; height: 6px; border-radius: 50%;
-            animation: blink 1.5s ease-in-out infinite;
-        }
-        .stat-card:nth-child(1)::after { background: var(--purple); box-shadow: 0 0 8px var(--purple); }
-        .stat-card:nth-child(2)::after { background: var(--green); box-shadow: 0 0 8px var(--green); animation-delay: 0.5s; }
-        .stat-card:nth-child(3)::after { background: var(--red); box-shadow: 0 0 8px var(--red); animation-delay: 1s; }
-        .stat-card:nth-child(4)::after { background: var(--cyan); box-shadow: 0 0 8px var(--cyan); animation-delay: 1.5s; }
-        @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.2; } }
+/* BUTTONS */
+.btn{
+  padding:11px 22px;border:none;border-radius:8px;cursor:pointer;
+  font-family:'Orbitron',sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;
+  transition:all 0.25s;text-decoration:none;display:inline-block;position:relative;overflow:hidden;
+}
+.btn::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.15),transparent);transition:left 0.4s;}
+.btn:hover::before{left:100%;}
+.btn:hover{transform:translateY(-2px);}
+.btn:active{transform:translateY(0) scale(0.98);}
+.btn-primary{background:#fff;color:#000;box-shadow:0 4px 20px rgba(255,255,255,0.3);}
+.btn-primary:hover{box-shadow:0 8px 40px rgba(255,255,255,0.6);}
+.btn-outline{background:transparent;color:#fff;border:1px solid rgba(255,255,255,0.3);}
+.btn-outline:hover{background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.6);box-shadow:0 0 20px rgba(255,255,255,0.1);}
+.btn-red{background:rgba(255,50,70,0.15);color:#ff4455;border:1px solid rgba(255,50,70,0.3);}
+.btn-red:hover{background:rgba(255,50,70,0.25);box-shadow:0 0 20px rgba(255,50,70,0.3);}
+.btn-green{background:rgba(0,255,136,0.1);color:#00ff88;border:1px solid rgba(0,255,136,0.3);}
+.btn-green:hover{background:rgba(0,255,136,0.2);box-shadow:0 0 20px rgba(0,255,136,0.3);}
+.btn-orange{background:rgba(255,120,0,0.1);color:#ff7800;border:1px solid rgba(255,120,0,0.3);}
+.btn-orange:hover{background:rgba(255,120,0,0.2);}
+.btn-gray{background:rgba(255,255,255,0.06);color:#888;border:1px solid rgba(255,255,255,0.1);}
+.btn-gray:hover{background:rgba(255,255,255,0.1);color:#ccc;}
+.btn-sm{padding:6px 12px;font-size:9px;}
 
-        .stat-num {
-            font-family: 'Orbitron', sans-serif; font-size: 38px; font-weight: 900;
-            line-height: 1; margin-bottom: 8px;
-            animation: numGlow 2s ease-in-out infinite alternate;
-        }
-        .stat-card:nth-child(1) .stat-num { color: var(--purple); text-shadow: 0 0 30px rgba(176,0,255,0.7); }
-        .stat-card:nth-child(2) .stat-num { color: var(--green); text-shadow: 0 0 30px rgba(0,255,136,0.7); }
-        .stat-card:nth-child(3) .stat-num { color: var(--red); text-shadow: 0 0 30px rgba(255,34,68,0.7); }
-        .stat-card:nth-child(4) .stat-num { color: var(--cyan); text-shadow: 0 0 30px rgba(0,238,255,0.7); }
-        @keyframes numGlow { from { opacity: 0.85; } to { opacity: 1; } }
+/* TABLE */
+.table-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:12px;}
+th{background:rgba(255,255,255,0.04);color:#444;padding:13px 14px;text-align:left;font-size:9px;letter-spacing:2px;text-transform:uppercase;border-bottom:1px solid var(--border);font-family:'Orbitron',sans-serif;}
+td{padding:13px 14px;border-bottom:1px solid rgba(255,255,255,0.05);vertical-align:middle;transition:background 0.2s;}
+tr:hover td{background:rgba(255,255,255,0.03);}
 
-        .stat-label { font-size: 9px; color: #444; letter-spacing: 3px; text-transform: uppercase; font-family: 'Orbitron', sans-serif; }
+/* BADGES */
+.badge{padding:4px 12px;border-radius:20px;font-size:9px;font-weight:700;letter-spacing:2px;font-family:'Orbitron',sans-serif;}
+.badge-valid{background:rgba(0,255,136,0.08);color:#00ff88;border:1px solid rgba(0,255,136,0.3);}
+.badge-expired{background:rgba(255,50,70,0.08);color:#ff4455;border:1px solid rgba(255,50,70,0.3);}
+.badge-disabled{background:rgba(255,120,0,0.08);color:#ff7800;border:1px solid rgba(255,120,0,0.3);}
+.badge-used{background:rgba(255,255,255,0.06);color:#fff;border:1px solid rgba(255,255,255,0.2);}
+.badge-unused{background:rgba(255,255,255,0.03);color:#444;border:1px solid rgba(255,255,255,0.07);}
 
-        /* CARDS */
-        .card {
-            background: rgba(5,0,15,0.85);
-            border: 1px solid rgba(176,0,255,0.2);
-            border-radius: 14px; padding: 24px; margin-bottom: 20px;
-            backdrop-filter: blur(10px); position: relative; overflow: hidden;
-            transition: border-color 0.3s;
-        }
-        .card:hover { border-color: rgba(176,0,255,0.5); }
-        .card::before {
-            content: ''; position: absolute; top: 0; left: 0;
-            width: 3px; height: 100%;
-            background: linear-gradient(180deg, var(--purple), var(--pink), var(--cyan));
-            animation: sideFlow 3s linear infinite;
-            background-size: 100% 200%;
-        }
-        @keyframes sideFlow { to { background-position: 0 200%; } }
+.key-text{font-family:'Share Tech Mono',monospace;font-size:12px;color:#fff;text-shadow:0 0 8px rgba(255,255,255,0.3);}
 
-        /* corner accents */
-        .card::after {
-            content: ''; position: absolute;
-            bottom: 0; right: 0;
-            width: 40px; height: 40px;
-            border-bottom: 1px solid rgba(176,0,255,0.3);
-            border-right: 1px solid rgba(176,0,255,0.3);
-            border-radius: 0 0 14px 0;
-        }
+details summary{cursor:pointer;color:#888;font-size:10px;letter-spacing:1px;list-style:none;}
+details summary::-webkit-details-marker{display:none;}
+.device-card{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:7px;padding:9px 12px;margin-top:6px;font-size:11px;}
 
-        .card-title {
-            font-family: 'Orbitron', sans-serif; font-size: 11px; color: var(--purple);
-            font-weight: 700; margin-bottom: 20px; letter-spacing: 3px;
-            display: flex; align-items: center; gap: 10px;
-            text-shadow: 0 0 10px rgba(176,0,255,0.5);
-        }
-        .card-title::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, rgba(176,0,255,0.4), transparent); }
+.extend-form{display:flex;gap:6px;align-items:center;}
+.extend-form input{width:65px;padding:7px 10px;font-size:12px;}
+.actions{display:flex;gap:5px;flex-wrap:wrap;}
 
-        /* FORMS */
-        .form-row { display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap; }
-        .form-group { display: flex; flex-direction: column; gap: 6px; }
-        .form-group label { font-size: 9px; color: #555; letter-spacing: 2px; text-transform: uppercase; font-family: 'Orbitron', sans-serif; }
+/* TOAST */
+.toast{
+  position:fixed;bottom:25px;right:25px;
+  background:#fff;color:#000;padding:13px 26px;border-radius:10px;
+  font-family:'Orbitron',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;
+  display:none;z-index:9999;box-shadow:0 0 40px rgba(255,255,255,0.4);
+  animation:toastIn 0.3s ease;
+}
+@keyframes toastIn{from{transform:translateX(100px) scale(0.8);opacity:0;}to{transform:translateX(0) scale(1);opacity:1;}}
 
-        input[type="text"], input[type="number"], input[type="datetime-local"], input[type="password"] {
-            background: rgba(176,0,255,0.05);
-            border: 1px solid rgba(176,0,255,0.2);
-            color: #e0e0e0; padding: 11px 14px;
-            border-radius: 8px; font-family: 'Share Tech Mono', monospace;
-            font-size: 13px; outline: none; transition: all 0.3s;
-        }
-        input:focus {
-            border-color: var(--purple);
-            background: rgba(176,0,255,0.1);
-            box-shadow: 0 0 20px rgba(176,0,255,0.2), inset 0 0 10px rgba(176,0,255,0.05);
-        }
-
-        /* BUTTONS */
-        .btn {
-            padding: 11px 22px; border: none; border-radius: 8px; cursor: pointer;
-            font-family: 'Orbitron', sans-serif; font-size: 10px; font-weight: 700;
-            letter-spacing: 2px; transition: all 0.25s; text-decoration: none;
-            display: inline-block; position: relative; overflow: hidden;
-        }
-        .btn::before {
-            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
-            transition: left 0.4s;
-        }
-        .btn:hover::before { left: 100%; }
-        .btn:hover { transform: translateY(-2px); }
-        .btn:active { transform: translateY(0) scale(0.98); }
-
-        .btn-primary { background: linear-gradient(135deg, #b000ff, #7000cc); color: #fff; box-shadow: 0 4px 20px rgba(176,0,255,0.4); }
-        .btn-primary:hover { box-shadow: 0 8px 35px rgba(176,0,255,0.7); }
-        .btn-cyan { background: linear-gradient(135deg, #00eeff, #0099bb); color: #000; box-shadow: 0 4px 20px rgba(0,238,255,0.4); }
-        .btn-cyan:hover { box-shadow: 0 8px 35px rgba(0,238,255,0.7); }
-        .btn-red { background: linear-gradient(135deg, #ff2244, #cc0022); color: #fff; box-shadow: 0 4px 20px rgba(255,34,68,0.4); }
-        .btn-red:hover { box-shadow: 0 8px 35px rgba(255,34,68,0.7); }
-        .btn-orange { background: linear-gradient(135deg, #ff6600, #cc4400); color: #fff; box-shadow: 0 4px 20px rgba(255,102,0,0.4); }
-        .btn-green { background: linear-gradient(135deg, #00ff88, #00cc66); color: #000; box-shadow: 0 4px 20px rgba(0,255,136,0.4); }
-        .btn-gray { background: rgba(255,255,255,0.07); color: #888; border: 1px solid rgba(255,255,255,0.1); }
-        .btn-gray:hover { background: rgba(255,255,255,0.12); color: #ccc; }
-        .btn-sm { padding: 6px 12px; font-size: 9px; }
-
-        /* TABLE */
-        .table-wrap { overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; font-size: 12px; }
-        th {
-            background: rgba(176,0,255,0.08); color: #555; padding: 13px 14px;
-            text-align: left; font-size: 9px; letter-spacing: 2px; text-transform: uppercase;
-            border-bottom: 1px solid rgba(176,0,255,0.15);
-            font-family: 'Orbitron', sans-serif;
-        }
-        td { padding: 13px 14px; border-bottom: 1px solid rgba(176,0,255,0.07); vertical-align: middle; transition: background 0.2s; }
-        tr:hover td { background: rgba(176,0,255,0.05); }
-
-        /* BADGES */
-        .badge {
-            padding: 4px 12px; border-radius: 20px; font-size: 9px; font-weight: 700;
-            letter-spacing: 2px; font-family: 'Orbitron', sans-serif;
-            animation: badgePulse 2s ease-in-out infinite;
-        }
-        .badge-valid { background: rgba(0,255,136,0.1); color: var(--green); border: 1px solid rgba(0,255,136,0.4); box-shadow: 0 0 10px rgba(0,255,136,0.2); }
-        .badge-expired { background: rgba(255,34,68,0.1); color: var(--red); border: 1px solid rgba(255,34,68,0.4); box-shadow: 0 0 10px rgba(255,34,68,0.2); }
-        .badge-disabled { background: rgba(255,102,0,0.1); color: var(--orange); border: 1px solid rgba(255,102,0,0.4); box-shadow: 0 0 10px rgba(255,102,0,0.2); }
-        .badge-used { background: rgba(0,238,255,0.1); color: var(--cyan); border: 1px solid rgba(0,238,255,0.4); box-shadow: 0 0 10px rgba(0,238,255,0.2); }
-        .badge-unused { background: rgba(255,255,255,0.04); color: #444; border: 1px solid rgba(255,255,255,0.08); }
-        @keyframes badgePulse { 0%,100% { opacity: 1; } 50% { opacity: 0.8; } }
-
-        .key-text { font-family: 'Share Tech Mono', monospace; font-size: 12px; color: var(--cyan); text-shadow: 0 0 8px rgba(0,238,255,0.4); }
-
-        details summary { cursor: pointer; color: var(--purple); font-size: 10px; letter-spacing: 1px; list-style: none; }
-        details summary::-webkit-details-marker { display: none; }
-
-        .device-card {
-            background: rgba(176,0,255,0.05); border: 1px solid rgba(176,0,255,0.2);
-            border-radius: 7px; padding: 9px 12px; margin-top: 6px; font-size: 11px;
-        }
-
-        .extend-form { display: flex; gap: 6px; align-items: center; }
-        .extend-form input { width: 65px; padding: 7px 10px; font-size: 12px; }
-        .actions { display: flex; gap: 5px; flex-wrap: wrap; }
-
-        /* TOAST */
-        .toast {
-            position: fixed; bottom: 25px; right: 25px;
-            background: linear-gradient(135deg, var(--green), #00cc66);
-            color: #000; padding: 13px 26px; border-radius: 10px;
-            font-family: 'Orbitron', sans-serif; font-size: 11px; font-weight: 700;
-            letter-spacing: 2px; display: none; z-index: 9999;
-            box-shadow: 0 0 40px rgba(0,255,136,0.5);
-            animation: toastIn 0.3s ease;
-        }
-        @keyframes toastIn { from { transform: translateX(100px) scale(0.8); opacity: 0; } to { transform: translateX(0) scale(1); opacity: 1; } }
-    </style>
+/* GLITCH effect on logo hover */
+.logo:hover{animation:glitch 0.3s linear;}
+@keyframes glitch{
+  0%{text-shadow:0 0 30px #fff;}
+  20%{text-shadow:-3px 0 30px #fff,3px 0 20px rgba(255,255,255,0.5);}
+  40%{text-shadow:3px 0 30px #fff,-3px 0 20px rgba(255,255,255,0.5);}
+  60%{text-shadow:-3px 0 30px #fff;}
+  80%{text-shadow:3px 0 30px #fff;}
+  100%{text-shadow:0 0 30px #fff;}
+}
+</style>
 </head>
 <body>
-    <canvas id="particles"></canvas>
-    <div class="grid-bg"></div>
-    <div class="scanline"></div>
-    <div class="orb orb1"></div>
-    <div class="orb orb2"></div>
-    <div class="orb orb3"></div>
+<canvas id="particles"></canvas>
+<div class="grid-bg"></div>
+<div class="scanline"></div>
 
-    <div class="navbar">
-        <div style="display:flex;align-items:center">
-            <div class="logo">NITRO_BP</div>
-            <span class="logo-sub">// DASHBOARD</span>
+<div class="navbar">
+  <div style="display:flex;align-items:center">
+    <div class="logo">NITRO_BP</div>
+    <span class="logo-sub">// DASHBOARD</span>
+  </div>
+  <div class="nav-right">
+    <button class="btn btn-outline btn-sm" onclick="copyAllKeys()">⬡ COPY ALL</button>
+    <a href="/delete_all" onclick="return confirm('Delete ALL keys?')" class="btn btn-red btn-sm">✕ DELETE ALL</a>
+    <a href="/logout" class="btn btn-gray btn-sm">⏻ LOGOUT</a>
+  </div>
+</div>
+
+<div class="container">
+  {% set valid_count = keys.values()|selectattr('expiry', 'gt', now)|list|length %}
+  {% set used_count = keys.values()|selectattr('devices')|list|length %}
+
+  <div class="stats">
+    <div class="stat-card"><div class="stat-num" data-target="{{ keys|length }}">0</div><div class="stat-label">Total Keys</div></div>
+    <div class="stat-card"><div class="stat-num" data-target="{{ valid_count }}">0</div><div class="stat-label">Valid Keys</div></div>
+    <div class="stat-card"><div class="stat-num" data-target="{{ keys|length - valid_count }}">0</div><div class="stat-label">Expired Keys</div></div>
+    <div class="stat-card"><div class="stat-num" data-target="{{ used_count }}">0</div><div class="stat-label">Active Devices</div></div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('generate',this)">⬡ GENERATE</button>
+    <button class="tab-btn" onclick="switchTab('add',this)">◈ ADD KEY</button>
+    <button class="tab-btn" onclick="switchTab('keys',this)">▣ KEYS ({{ keys|length }})</button>
+  </div>
+
+  <!-- TAB: GENERATE -->
+  <div id="tab-generate" class="tab-content active">
+    <div class="card">
+      <div class="card-title">⬡ GENERATE KEYS</div>
+      <form method="POST" action="/generate">
+        <div class="form-row">
+          <div class="form-group"><label>Count (1-100)</label><input type="number" name="count" min="1" max="100" value="1" style="width:100px"></div>
+          <div class="form-group"><label>Days</label><input type="number" name="days" min="1" value="30" style="width:80px"></div>
+          <div class="form-group"><label>Max Devices</label><input type="number" name="max_devices" min="1" value="1" style="width:80px"></div>
+          <button type="submit" class="btn btn-primary">⬡ GENERATE</button>
         </div>
-        <div class="nav-right">
-            <button class="btn btn-cyan btn-sm" onclick="copyAllKeys()">⬡ COPY ALL</button>
-            <a href="/delete_all" onclick="return confirm('Delete ALL keys?')" class="btn btn-red btn-sm">✕ DELETE ALL</a>
-            <a href="/logout" class="btn btn-gray btn-sm">⏻ LOGOUT</a>
-        </div>
+      </form>
     </div>
+  </div>
 
-    <div class="container">
-        {% set valid_count = keys.values()|selectattr('expiry', 'gt', now)|list|length %}
-        {% set used_count = keys.values()|selectattr('devices')|list|length %}
-
-        <div class="stats">
-            <div class="stat-card">
-                <div class="stat-num">{{ keys|length }}</div>
-                <div class="stat-label">Total Keys</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-num">{{ valid_count }}</div>
-                <div class="stat-label">Valid Keys</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-num">{{ keys|length - valid_count }}</div>
-                <div class="stat-label">Expired Keys</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-num">{{ used_count }}</div>
-                <div class="stat-label">Active Devices</div>
-            </div>
+  <!-- TAB: ADD -->
+  <div id="tab-add" class="tab-content">
+    <div class="card">
+      <div class="card-title">◈ ADD SINGLE KEY</div>
+      <form method="POST" action="/add">
+        <div class="form-row">
+          <div class="form-group"><label>Key Name</label><input type="text" name="key" required style="width:200px"></div>
+          <div class="form-group"><label>Expiry</label><input type="datetime-local" name="expiry" required></div>
+          <div class="form-group"><label>Max Devices</label><input type="number" name="max_devices" min="1" value="1" style="width:80px"></div>
+          <button type="submit" class="btn btn-primary">+ ADD KEY</button>
         </div>
-
-        <div class="card">
-            <div class="card-title">⬡ GENERATE KEYS</div>
-            <form method="POST" action="/generate">
-                <div class="form-row">
-                    <div class="form-group"><label>Count (1-100)</label><input type="number" name="count" min="1" max="100" value="1" style="width:100px"></div>
-                    <div class="form-group"><label>Days</label><input type="number" name="days" min="1" value="30" style="width:80px"></div>
-                    <div class="form-group"><label>Max Devices</label><input type="number" name="max_devices" min="1" value="1" style="width:80px"></div>
-                    <button type="submit" class="btn btn-primary">⬡ GENERATE</button>
-                </div>
-            </form>
-        </div>
-
-        <div class="card">
-            <div class="card-title">◈ ADD SINGLE KEY</div>
-            <form method="POST" action="/add">
-                <div class="form-row">
-                    <div class="form-group"><label>Key Name</label><input type="text" name="key" required style="width:200px"></div>
-                    <div class="form-group"><label>Expiry</label><input type="datetime-local" name="expiry" required></div>
-                    <div class="form-group"><label>Max Devices</label><input type="number" name="max_devices" min="1" value="1" style="width:80px"></div>
-                    <button type="submit" class="btn btn-cyan">+ ADD KEY</button>
-                </div>
-            </form>
-        </div>
-
-        <div class="card">
-            <div class="card-title">◈ KEYS ({{ keys|length }})</div>
-            <div class="table-wrap">
-                <table>
-                    <tr><th>Key</th><th>Expiry</th><th>Status</th><th>Used</th><th>Devices</th><th>Extend / Reduce</th><th>Actions</th></tr>
-                    {% for key, data in keys.items() %}
-                    {% set is_disabled = data.get('disabled', False) %}
-                    {% set is_valid = data.expiry > now and not is_disabled %}
-                    {% set device_count = data.devices|length %}
-                    <tr>
-                        <td>
-                            <span class="key-text key-val">{{ key }}</span>
-                            <button class="btn btn-gray btn-sm" onclick="copyText('{{ key }}')" style="margin-left:6px">⬡</button>
-                        </td>
-                        <td style="color:#555;font-size:11px">{{ data.expiry }}</td>
-                        <td><span class="badge {{ 'badge-disabled' if is_disabled else ('badge-valid' if is_valid else 'badge-expired') }}">{{ 'DISABLED' if is_disabled else ('VALID' if is_valid else 'EXPIRED') }}</span></td>
-                        <td><span class="badge {{ 'badge-used' if device_count > 0 else 'badge-unused' }}">{{ 'USED' if device_count > 0 else 'UNUSED' }}</span></td>
-                        <td>
-                            <span style="color:#555">{{ device_count }}/{{ data.get('max_devices', 1) }}</span>
-                            {% if data.devices %}
-                            <details>
-                                <summary style="margin-top:4px">▸ SHOW {{ device_count }}</summary>
-                                {% for hwid, dev in data.devices.items() %}
-                                <div class="device-card">
-                                    <div style="color:var(--cyan)">◈ {{ dev.name }}</div>
-                                    <div style="color:#444;font-size:10px">{{ dev.last_seen[:16] }}</div>
-                                    <a href="/remove_device/{{ key }}/{{ hwid }}"><button class="btn btn-red btn-sm" style="margin-top:5px">✕ REMOVE</button></a>
-                                </div>
-                                {% endfor %}
-                            </details>
-                            {% endif %}
-                        </td>
-                        <td>
-                            <form method="POST" action="/extend/{{ key }}" class="extend-form">
-                                <input type="number" name="days" placeholder="days">
-                                <button type="submit" class="btn btn-primary btn-sm">APPLY</button>
-                            </form>
-                        </td>
-                        <td>
-                            <div class="actions">
-                                <a href="/toggle/{{ key }}"><button class="btn btn-sm {{ 'btn-green' if is_disabled else 'btn-orange' }}">{{ '▶ ENABLE' if is_disabled else '⏸ DISABLE' }}</button></a>
-                                <a href="/delete/{{ key }}" onclick="return confirm('Delete?')"><button class="btn btn-red btn-sm">✕ DELETE</button></a>
-                            </div>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </table>
-            </div>
-        </div>
+      </form>
     </div>
+  </div>
 
-    <div class="toast" id="toast">✓ COPIED</div>
+  <!-- TAB: KEYS -->
+  <div id="tab-keys" class="tab-content">
+    <div class="card">
+      <div class="card-title">▣ ALL KEYS</div>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Key</th><th>Expiry</th><th>Status</th><th>Used</th><th>Devices</th><th>Extend</th><th>Actions</th></tr>
+          {% for key, data in keys.items() %}
+          {% set is_disabled = data.get('disabled', False) %}
+          {% set is_valid = data.expiry > now and not is_disabled %}
+          {% set device_count = data.devices|length %}
+          <tr>
+            <td>
+              <span class="key-text key-val">{{ key }}</span>
+              <button class="btn btn-gray btn-sm" onclick="copyText('{{ key }}')" style="margin-left:6px">⬡</button>
+            </td>
+            <td style="color:#555;font-size:11px">{{ data.expiry }}</td>
+            <td><span class="badge {{ 'badge-disabled' if is_disabled else ('badge-valid' if is_valid else 'badge-expired') }}">{{ 'DISABLED' if is_disabled else ('VALID' if is_valid else 'EXPIRED') }}</span></td>
+            <td><span class="badge {{ 'badge-used' if device_count > 0 else 'badge-unused' }}">{{ 'USED' if device_count > 0 else 'UNUSED' }}</span></td>
+            <td>
+              <span style="color:#555">{{ device_count }}/{{ data.get('max_devices', 1) }}</span>
+              {% if data.devices %}
+              <details>
+                <summary style="margin-top:4px">▸ SHOW {{ device_count }}</summary>
+                {% for hwid, dev in data.devices.items() %}
+                <div class="device-card">
+                  <div style="color:#fff">◈ {{ dev.name }}</div>
+                  <div style="color:#444;font-size:10px">{{ dev.last_seen[:16] }}</div>
+                  <a href="/remove_device/{{ key }}/{{ hwid }}"><button class="btn btn-red btn-sm" style="margin-top:5px">✕ REMOVE</button></a>
+                </div>
+                {% endfor %}
+              </details>
+              {% endif %}
+            </td>
+            <td>
+              <form method="POST" action="/extend/{{ key }}" class="extend-form">
+                <input type="number" name="days" placeholder="days">
+                <button type="submit" class="btn btn-outline btn-sm">APPLY</button>
+              </form>
+            </td>
+            <td>
+              <div class="actions">
+                <a href="/toggle/{{ key }}"><button class="btn btn-sm {{ 'btn-green' if is_disabled else 'btn-orange' }}">{{ '▶ ENABLE' if is_disabled else '⏸ DISABLE' }}</button></a>
+                <a href="/delete/{{ key }}" onclick="return confirm('Delete?')"><button class="btn btn-red btn-sm">✕ DEL</button></a>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
 
-    <script>
-        // PARTICLES
-        const canvas = document.getElementById('particles');
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
+<div class="toast" id="toast">✓ COPIED</div>
 
-        const particles = Array.from({length: 80}, () => ({
-            x: Math.random() * canvas.width,
-            y: Math.random() * canvas.height,
-            vx: (Math.random() - 0.5) * 0.4,
-            vy: (Math.random() - 0.5) * 0.4,
-            size: Math.random() * 2 + 0.5,
-            color: ['#b000ff','#ff0080','#00eeff','#00ff88'][Math.floor(Math.random()*4)],
-            alpha: Math.random() * 0.6 + 0.1
-        }));
+<script>
+// PARTICLES
+const canvas = document.getElementById('particles');
+const ctx = canvas.getContext('2d');
+function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
+resize();window.addEventListener('resize',resize);
+const pts = Array.from({length:100},()=>({
+  x:Math.random()*canvas.width,y:Math.random()*canvas.height,
+  vx:(Math.random()-.5)*.5,vy:(Math.random()-.5)*.5,
+  size:Math.random()*1.5+.5,alpha:Math.random()*.4+.1
+}));
+function draw(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  pts.forEach(p=>{
+    p.x+=p.vx;p.y+=p.vy;
+    if(p.x<0)p.x=canvas.width;if(p.x>canvas.width)p.x=0;
+    if(p.y<0)p.y=canvas.height;if(p.y>canvas.height)p.y=0;
+    ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
+    ctx.fillStyle=`rgba(255,255,255,${p.alpha})`;ctx.fill();
+  });
+  pts.forEach((p,i)=>pts.slice(i+1).forEach(q=>{
+    const d=Math.hypot(p.x-q.x,p.y-q.y);
+    if(d<120){ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(q.x,q.y);
+    ctx.strokeStyle=`rgba(255,255,255,${(1-d/120)*.08})`;ctx.lineWidth=.5;ctx.stroke();}
+  }));
+  requestAnimationFrame(draw);
+}
+draw();
 
-        function drawParticles() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            particles.forEach(p => {
-                p.x += p.vx; p.y += p.vy;
-                if (p.x < 0) p.x = canvas.width;
-                if (p.x > canvas.width) p.x = 0;
-                if (p.y < 0) p.y = canvas.height;
-                if (p.y > canvas.height) p.y = 0;
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-                ctx.fillStyle = p.color;
-                ctx.globalAlpha = p.alpha;
-                ctx.fill();
-            });
-            // draw lines between close particles
-            particles.forEach((p, i) => {
-                particles.slice(i+1).forEach(q => {
-                    const d = Math.hypot(p.x-q.x, p.y-q.y);
-                    if (d < 100) {
-                        ctx.beginPath();
-                        ctx.moveTo(p.x, p.y);
-                        ctx.lineTo(q.x, q.y);
-                        ctx.strokeStyle = '#b000ff';
-                        ctx.globalAlpha = (1 - d/100) * 0.15;
-                        ctx.lineWidth = 0.5;
-                        ctx.stroke();
-                    }
-                });
-            });
-            ctx.globalAlpha = 1;
-            requestAnimationFrame(drawParticles);
-        }
-        drawParticles();
+// TABS
+function switchTab(id,btn){
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  btn.classList.add('active');
+}
 
-        function copyText(text) { navigator.clipboard.writeText(text); showToast(); }
-        function copyAllKeys() {
-            const keys = Array.from(document.querySelectorAll('.key-val')).map(k => k.textContent).join('\n');
-            navigator.clipboard.writeText(keys); showToast();
-        }
-        function showToast() {
-            const t = document.getElementById('toast');
-            t.style.display = 'block';
-            setTimeout(() => t.style.display = 'none', 2000);
-        }
+// Check if URL has tab param
+const urlTab = new URLSearchParams(window.location.search).get('tab');
+if(urlTab) document.querySelector(`[onclick*="${urlTab}"]`)?.click();
 
-        // counter animation for stats
-        document.querySelectorAll('.stat-num').forEach(el => {
-            const target = parseInt(el.textContent) || 0;
-            let current = 0;
-            const step = Math.max(1, Math.floor(target / 30));
-            const timer = setInterval(() => {
-                current = Math.min(current + step, target);
-                el.textContent = current;
-                if (current >= target) clearInterval(timer);
-            }, 30);
-        });
-    </script>
+// COUNTER ANIMATION
+document.querySelectorAll('.stat-num[data-target]').forEach(el=>{
+  const target=parseInt(el.dataset.target)||0;
+  let cur=0;const step=Math.max(1,Math.ceil(target/40));
+  const t=setInterval(()=>{cur=Math.min(cur+step,target);el.textContent=cur;if(cur>=target)clearInterval(t);},25);
+});
+
+function copyText(text){navigator.clipboard.writeText(text);showToast();}
+function copyAllKeys(){
+  const keys=Array.from(document.querySelectorAll('.key-val')).map(k=>k.textContent).join('\n');
+  navigator.clipboard.writeText(keys);showToast();
+}
+function showToast(){
+  const t=document.getElementById('toast');t.style.display='block';
+  setTimeout(()=>t.style.display='none',2000);
+}
+</script>
 </body>
 </html>
