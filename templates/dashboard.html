@@ -5,77 +5,340 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NITRO_BP | Dashboard</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap');
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: #0d0d0d; color: #e0e0e0; font-family: 'Segoe UI', monospace; min-height: 100vh; }
-        
-        .navbar { background: #111; border-bottom: 1px solid #1e1e2e; padding: 15px 30px; display: flex; align-items: center; justify-content: space-between; }
-        .navbar .logo { color: #a855f7; font-size: 20px; font-weight: bold; letter-spacing: 2px; }
-        .navbar .logo span { color: #06b6d4; }
-        .navbar .nav-right { display: flex; gap: 10px; align-items: center; }
-        
-        .container { padding: 30px; max-width: 1400px; margin: 0 auto; }
-        
-        .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 25px; }
-        .stat-card { background: #111; border: 1px solid #1e1e2e; border-radius: 10px; padding: 20px; text-align: center; }
-        .stat-card .num { font-size: 28px; font-weight: bold; color: #a855f7; }
-        .stat-card .label { font-size: 12px; color: #666; margin-top: 5px; }
-        
-        .card { background: #111; border: 1px solid #1e1e2e; border-radius: 10px; padding: 20px; margin-bottom: 20px; }
-        .card-title { font-size: 14px; color: #a855f7; font-weight: bold; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #1e1e2e; padding-bottom: 10px; }
-        
-        .form-row { display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap; }
-        .form-group { display: flex; flex-direction: column; gap: 5px; }
-        .form-group label { font-size: 11px; color: #666; text-transform: uppercase; letter-spacing: 1px; }
-        input[type="text"], input[type="number"], input[type="datetime-local"], input[type="password"] {
-            background: #1a1a2e; border: 1px solid #2e2e4e; color: #e0e0e0; padding: 9px 12px;
-            border-radius: 6px; font-size: 13px; outline: none; transition: border 0.2s;
+
+        :root {
+            --purple: #a800ff;
+            --pink: #ff0080;
+            --cyan: #00d4ff;
+            --green: #00ff88;
+            --orange: #ff6600;
+            --red: #ff2244;
+            --bg: #000;
+            --bg2: rgba(10,0,20,0.9);
+            --border: rgba(168,0,255,0.25);
         }
-        input:focus { border-color: #a855f7; }
-        
-        .btn { padding: 9px 18px; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: bold; transition: opacity 0.2s; text-decoration: none; display: inline-block; }
-        .btn:hover { opacity: 0.85; }
-        .btn-primary { background: #a855f7; color: #fff; }
-        .btn-cyan { background: #06b6d4; color: #000; }
-        .btn-red { background: #ef4444; color: #fff; }
-        .btn-orange { background: #f97316; color: #fff; }
-        .btn-green { background: #22c55e; color: #000; }
-        .btn-gray { background: #374151; color: #fff; }
-        .btn-sm { padding: 5px 10px; font-size: 11px; }
-        
-        table { width: 100%; border-collapse: collapse; font-size: 13px; }
-        th { background: #0d0d0d; color: #666; padding: 10px 12px; text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #1e1e2e; }
-        td { padding: 10px 12px; border-bottom: 1px solid #1a1a2e; vertical-align: middle; }
-        tr:hover td { background: #161626; }
-        
-        .badge { padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; }
-        .badge-valid { background: #14532d; color: #22c55e; }
-        .badge-expired { background: #450a0a; color: #ef4444; }
-        .badge-disabled { background: #431407; color: #f97316; }
-        .badge-used { background: #1e1b4b; color: #818cf8; }
-        .badge-unused { background: #1a1a2e; color: #666; }
-        
-        .key-text { font-family: monospace; font-size: 12px; color: #06b6d4; }
-        
-        details summary { cursor: pointer; color: #a855f7; font-size: 12px; }
-        .device-card { background: #0d0d0d; border: 1px solid #1e1e2e; border-radius: 6px; padding: 8px; margin-top: 5px; font-size: 11px; }
-        
-        .extend-form { display: flex; gap: 5px; align-items: center; }
-        .extend-form input { width: 60px; padding: 5px 8px; font-size: 12px; }
-        
+
+        body {
+            background: var(--bg);
+            color: #e0e0e0;
+            font-family: 'Share Tech Mono', monospace;
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(168,0,255,0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(168,0,255,0.04) 1px, transparent 1px);
+            background-size: 40px 40px;
+            animation: gridMove 25s linear infinite;
+            z-index: 0;
+            pointer-events: none;
+        }
+        @keyframes gridMove { to { transform: translateY(40px); } }
+
+        .scanline {
+            position: fixed;
+            inset: 0;
+            background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        /* NAVBAR */
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(0,0,0,0.95);
+            border-bottom: 1px solid var(--border);
+            padding: 0 30px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 0 30px rgba(168,0,255,0.1);
+        }
+
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 20px;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--purple), var(--pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 3px;
+            filter: drop-shadow(0 0 10px rgba(168,0,255,0.4));
+        }
+
+        .logo-sub {
+            font-size: 10px;
+            color: #444;
+            letter-spacing: 3px;
+            font-family: 'Share Tech Mono', monospace;
+            -webkit-text-fill-color: #444;
+            margin-left: 10px;
+        }
+
+        .nav-right { display: flex; gap: 8px; align-items: center; }
+
+        /* CONTAINER */
+        .container { padding: 25px 30px; max-width: 1500px; margin: 0 auto; position: relative; z-index: 1; }
+
+        /* STATS */
+        .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 25px; }
+
+        .stat-card {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 22px 20px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 40px rgba(168,0,255,0.15);
+        }
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+        }
+        .stat-card:nth-child(1)::before { background: linear-gradient(90deg, var(--purple), var(--pink)); }
+        .stat-card:nth-child(2)::before { background: linear-gradient(90deg, var(--green), var(--cyan)); }
+        .stat-card:nth-child(3)::before { background: linear-gradient(90deg, var(--red), var(--orange)); }
+        .stat-card:nth-child(4)::before { background: linear-gradient(90deg, var(--cyan), var(--purple)); }
+
+        .stat-num {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 32px;
+            font-weight: 900;
+            line-height: 1;
+            margin-bottom: 6px;
+        }
+        .stat-card:nth-child(1) .stat-num { color: var(--purple); text-shadow: 0 0 20px rgba(168,0,255,0.5); }
+        .stat-card:nth-child(2) .stat-num { color: var(--green); text-shadow: 0 0 20px rgba(0,255,136,0.5); }
+        .stat-card:nth-child(3) .stat-num { color: var(--red); text-shadow: 0 0 20px rgba(255,34,68,0.5); }
+        .stat-card:nth-child(4) .stat-num { color: var(--cyan); text-shadow: 0 0 20px rgba(0,212,255,0.5); }
+
+        .stat-label { font-size: 10px; color: #555; letter-spacing: 3px; text-transform: uppercase; }
+
+        .stat-icon {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 32px;
+            opacity: 0.1;
+        }
+
+        /* CARDS */
+        .card {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 22px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 3px; height: 100%;
+            background: linear-gradient(180deg, var(--purple), var(--pink));
+        }
+
+        .card-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 11px;
+            color: var(--purple);
+            font-weight: 700;
+            margin-bottom: 18px;
+            letter-spacing: 3px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .card-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, var(--border), transparent);
+        }
+
+        /* FORMS */
+        .form-row { display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap; }
+        .form-group { display: flex; flex-direction: column; gap: 6px; }
+        .form-group label { font-size: 10px; color: #555; letter-spacing: 2px; text-transform: uppercase; }
+
+        input[type="text"], input[type="number"], input[type="datetime-local"], input[type="password"] {
+            background: rgba(168,0,255,0.05);
+            border: 1px solid rgba(168,0,255,0.2);
+            color: #e0e0e0;
+            padding: 10px 14px;
+            border-radius: 7px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 13px;
+            outline: none;
+            transition: all 0.2s;
+        }
+        input:focus {
+            border-color: var(--purple);
+            background: rgba(168,0,255,0.1);
+            box-shadow: 0 0 15px rgba(168,0,255,0.15);
+        }
+
+        /* BUTTONS */
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 7px;
+            cursor: pointer;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.4s;
+        }
+        .btn:hover::before { left: 100%; }
+        .btn:hover { transform: translateY(-1px); }
+        .btn:active { transform: translateY(0); }
+
+        .btn-primary { background: linear-gradient(135deg, #a800ff, #7000cc); color: #fff; box-shadow: 0 4px 15px rgba(168,0,255,0.3); }
+        .btn-primary:hover { box-shadow: 0 6px 25px rgba(168,0,255,0.5); }
+        .btn-cyan { background: linear-gradient(135deg, #00d4ff, #0099cc); color: #000; box-shadow: 0 4px 15px rgba(0,212,255,0.3); }
+        .btn-red { background: linear-gradient(135deg, #ff2244, #cc0022); color: #fff; box-shadow: 0 4px 15px rgba(255,34,68,0.3); }
+        .btn-orange { background: linear-gradient(135deg, #ff6600, #cc4400); color: #fff; box-shadow: 0 4px 15px rgba(255,102,0,0.3); }
+        .btn-green { background: linear-gradient(135deg, #00ff88, #00cc66); color: #000; box-shadow: 0 4px 15px rgba(0,255,136,0.3); }
+        .btn-gray { background: rgba(255,255,255,0.08); color: #aaa; border: 1px solid rgba(255,255,255,0.1); }
+        .btn-gray:hover { background: rgba(255,255,255,0.12); }
+        .btn-sm { padding: 6px 12px; font-size: 9px; }
+
+        /* TABLE */
+        .table-wrap { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        th {
+            background: rgba(168,0,255,0.08);
+            color: #555;
+            padding: 12px 14px;
+            text-align: left;
+            font-size: 9px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            border-bottom: 1px solid var(--border);
+            font-family: 'Orbitron', sans-serif;
+        }
+        td {
+            padding: 12px 14px;
+            border-bottom: 1px solid rgba(168,0,255,0.08);
+            vertical-align: middle;
+        }
+        tr:hover td { background: rgba(168,0,255,0.04); }
+
+        /* BADGES */
+        .badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            font-family: 'Orbitron', sans-serif;
+        }
+        .badge-valid { background: rgba(0,255,136,0.1); color: var(--green); border: 1px solid rgba(0,255,136,0.3); }
+        .badge-expired { background: rgba(255,34,68,0.1); color: var(--red); border: 1px solid rgba(255,34,68,0.3); }
+        .badge-disabled { background: rgba(255,102,0,0.1); color: var(--orange); border: 1px solid rgba(255,102,0,0.3); }
+        .badge-used { background: rgba(0,212,255,0.1); color: var(--cyan); border: 1px solid rgba(0,212,255,0.3); }
+        .badge-unused { background: rgba(255,255,255,0.05); color: #444; border: 1px solid rgba(255,255,255,0.08); }
+
+        .key-text {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 12px;
+            color: var(--cyan);
+            text-shadow: 0 0 8px rgba(0,212,255,0.3);
+        }
+
+        details summary {
+            cursor: pointer;
+            color: var(--purple);
+            font-size: 10px;
+            letter-spacing: 1px;
+            list-style: none;
+        }
+        details summary::-webkit-details-marker { display: none; }
+
+        .device-card {
+            background: rgba(168,0,255,0.05);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 8px 10px;
+            margin-top: 6px;
+            font-size: 11px;
+        }
+
+        .extend-form { display: flex; gap: 6px; align-items: center; }
+        .extend-form input { width: 65px; padding: 6px 10px; font-size: 12px; }
+
         .actions { display: flex; gap: 5px; flex-wrap: wrap; }
-        
-        .toast { position: fixed; bottom: 20px; right: 20px; background: #22c55e; color: #000; padding: 10px 20px; border-radius: 8px; font-weight: bold; display: none; z-index: 999; }
+
+        /* TOAST */
+        .toast {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            background: linear-gradient(135deg, var(--green), #00cc66);
+            color: #000;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            display: none;
+            z-index: 9999;
+            box-shadow: 0 0 30px rgba(0,255,136,0.4);
+            animation: slideIn 0.3s ease;
+        }
+        @keyframes slideIn {
+            from { transform: translateX(100px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
     </style>
     <script>
         function copyText(text) {
             navigator.clipboard.writeText(text);
-            const t = document.getElementById('toast');
-            t.style.display = 'block';
-            setTimeout(() => t.style.display = 'none', 2000);
+            showToast();
         }
         function copyAllKeys() {
             const keys = Array.from(document.querySelectorAll('.key-val')).map(k => k.textContent).join('\n');
             navigator.clipboard.writeText(keys);
+            showToast();
+        }
+        function showToast() {
             const t = document.getElementById('toast');
             t.style.display = 'block';
             setTimeout(() => t.style.display = 'none', 2000);
@@ -83,97 +346,164 @@
     </script>
 </head>
 <body>
+    <div class="scanline"></div>
+
     <div class="navbar">
-        <div class="logo">NITRO<span>_BP</span> <span style="font-size:12px;color:#666;font-weight:normal">Dashboard</span></div>
+        <div style="display:flex;align-items:center">
+            <div class="logo">NITRO_BP</div>
+            <span class="logo-sub">// DASHBOARD</span>
+        </div>
         <div class="nav-right">
-            <button class="btn btn-cyan btn-sm" onclick="copyAllKeys()">Copy All Keys</button>
-            <a href="/delete_all" onclick="return confirm('Delete ALL keys?')" class="btn btn-red btn-sm">Delete All</a>
-            <a href="/logout" class="btn btn-gray btn-sm">Logout</a>
+            <button class="btn btn-cyan btn-sm" onclick="copyAllKeys()">⬡ COPY ALL</button>
+            <a href="/delete_all" onclick="return confirm('Delete ALL keys?')" class="btn btn-red btn-sm">✕ DELETE ALL</a>
+            <a href="/logout" class="btn btn-gray btn-sm">⏻ LOGOUT</a>
         </div>
     </div>
 
     <div class="container">
         {% set valid_count = keys.values()|selectattr('expiry', 'gt', now)|list|length %}
         {% set used_count = keys.values()|selectattr('devices')|list|length %}
+
         <div class="stats">
-            <div class="stat-card"><div class="num">{{ keys|length }}</div><div class="label">Total Keys</div></div>
-            <div class="stat-card"><div class="num" style="color:#22c55e">{{ valid_count }}</div><div class="label">Valid Keys</div></div>
-            <div class="stat-card"><div class="num" style="color:#ef4444">{{ keys|length - valid_count }}</div><div class="label">Expired Keys</div></div>
-            <div class="stat-card"><div class="num" style="color:#06b6d4">{{ used_count }}</div><div class="label">Used Keys</div></div>
+            <div class="stat-card">
+                <div class="stat-num">{{ keys|length }}</div>
+                <div class="stat-label">Total Keys</div>
+                <div class="stat-icon">⬡</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-num">{{ valid_count }}</div>
+                <div class="stat-label">Valid Keys</div>
+                <div class="stat-icon">✓</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-num">{{ keys|length - valid_count }}</div>
+                <div class="stat-label">Expired Keys</div>
+                <div class="stat-icon">✕</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-num">{{ used_count }}</div>
+                <div class="stat-label">Active Devices</div>
+                <div class="stat-icon">◈</div>
+            </div>
         </div>
 
         <div class="card">
-            <div class="card-title">Generate Keys</div>
+            <div class="card-title">⬡ GENERATE KEYS</div>
             <form method="POST" action="/generate">
                 <div class="form-row">
-                    <div class="form-group"><label>Count (1-100)</label><input type="number" name="count" min="1" max="100" value="1" style="width:100px"></div>
-                    <div class="form-group"><label>Days</label><input type="number" name="days" min="1" value="30" style="width:80px"></div>
-                    <div class="form-group"><label>Max Devices</label><input type="number" name="max_devices" min="1" value="1" style="width:80px"></div>
-                    <button type="submit" class="btn btn-primary">Generate</button>
+                    <div class="form-group">
+                        <label>Count (1-100)</label>
+                        <input type="number" name="count" min="1" max="100" value="1" style="width:100px">
+                    </div>
+                    <div class="form-group">
+                        <label>Days</label>
+                        <input type="number" name="days" min="1" value="30" style="width:80px">
+                    </div>
+                    <div class="form-group">
+                        <label>Max Devices</label>
+                        <input type="number" name="max_devices" min="1" value="1" style="width:80px">
+                    </div>
+                    <button type="submit" class="btn btn-primary">⬡ GENERATE</button>
                 </div>
             </form>
         </div>
 
         <div class="card">
-            <div class="card-title">Add Single Key</div>
+            <div class="card-title">◈ ADD SINGLE KEY</div>
             <form method="POST" action="/add">
                 <div class="form-row">
-                    <div class="form-group"><label>Key Name</label><input type="text" name="key" required style="width:200px"></div>
-                    <div class="form-group"><label>Expiry</label><input type="datetime-local" name="expiry" required></div>
-                    <div class="form-group"><label>Max Devices</label><input type="number" name="max_devices" min="1" value="1" style="width:80px"></div>
-                    <button type="submit" class="btn btn-cyan">Add</button>
+                    <div class="form-group">
+                        <label>Key Name</label>
+                        <input type="text" name="key" required style="width:200px">
+                    </div>
+                    <div class="form-group">
+                        <label>Expiry</label>
+                        <input type="datetime-local" name="expiry" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Max Devices</label>
+                        <input type="number" name="max_devices" min="1" value="1" style="width:80px">
+                    </div>
+                    <button type="submit" class="btn btn-cyan">+ ADD KEY</button>
                 </div>
             </form>
         </div>
 
         <div class="card">
-            <div class="card-title">Keys ({{ keys|length }})</div>
-            <table>
-                <tr><th>Key</th><th>Expiry</th><th>Status</th><th>Used</th><th>Devices</th><th>Extend/Reduce</th><th>Actions</th></tr>
-                {% for key, data in keys.items() %}
-                {% set is_disabled = data.get('disabled', False) %}
-                {% set is_valid = data.expiry > now and not is_disabled %}
-                {% set device_count = data.devices|length %}
-                <tr>
-                    <td>
-                        <span class="key-text key-val">{{ key }}</span>
-                        <button class="btn btn-gray btn-sm" onclick="copyText('{{ key }}')" style="margin-left:5px">Copy</button>
-                    </td>
-                    <td style="color:#888;font-size:12px">{{ data.expiry }}</td>
-                    <td><span class="badge {{ 'badge-disabled' if is_disabled else ('badge-valid' if is_valid else 'badge-expired') }}">{{ 'DISABLED' if is_disabled else ('VALID' if is_valid else 'EXPIRED') }}</span></td>
-                    <td><span class="badge {{ 'badge-used' if device_count > 0 else 'badge-unused' }}">{{ 'USED' if device_count > 0 else 'UNUSED' }}</span></td>
-                    <td>
-                        <span style="color:#888">{{ device_count }}/{{ data.get('max_devices', 1) }}</span>
-                        {% if data.devices %}
-                        <details>
-                            <summary>Show {{ device_count }}</summary>
-                            {% for hwid, dev in data.devices.items() %}
-                            <div class="device-card">
-                                <div style="color:#06b6d4">💻 {{ dev.name }}</div>
-                                <div style="color:#666">{{ dev.last_seen[:16] }}</div>
-                                <a href="/remove_device/{{ key }}/{{ hwid }}"><button class="btn btn-red btn-sm" style="margin-top:4px">Remove</button></a>
+            <div class="card-title">◈ KEYS ({{ keys|length }})</div>
+            <div class="table-wrap">
+                <table>
+                    <tr>
+                        <th>Key</th>
+                        <th>Expiry</th>
+                        <th>Status</th>
+                        <th>Used</th>
+                        <th>Devices</th>
+                        <th>Extend / Reduce</th>
+                        <th>Actions</th>
+                    </tr>
+                    {% for key, data in keys.items() %}
+                    {% set is_disabled = data.get('disabled', False) %}
+                    {% set is_valid = data.expiry > now and not is_disabled %}
+                    {% set device_count = data.devices|length %}
+                    <tr>
+                        <td>
+                            <span class="key-text key-val">{{ key }}</span>
+                            <button class="btn btn-gray btn-sm" onclick="copyText('{{ key }}')" style="margin-left:6px">⬡</button>
+                        </td>
+                        <td style="color:#555;font-size:11px">{{ data.expiry }}</td>
+                        <td>
+                            <span class="badge {{ 'badge-disabled' if is_disabled else ('badge-valid' if is_valid else 'badge-expired') }}">
+                                {{ 'DISABLED' if is_disabled else ('VALID' if is_valid else 'EXPIRED') }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge {{ 'badge-used' if device_count > 0 else 'badge-unused' }}">
+                                {{ 'USED' if device_count > 0 else 'UNUSED' }}
+                            </span>
+                        </td>
+                        <td>
+                            <span style="color:#555">{{ device_count }}/{{ data.get('max_devices', 1) }}</span>
+                            {% if data.devices %}
+                            <details>
+                                <summary style="margin-top:4px">▸ SHOW {{ device_count }}</summary>
+                                {% for hwid, dev in data.devices.items() %}
+                                <div class="device-card">
+                                    <div style="color:var(--cyan)">◈ {{ dev.name }}</div>
+                                    <div style="color:#444;font-size:10px">{{ dev.last_seen[:16] }}</div>
+                                    <a href="/remove_device/{{ key }}/{{ hwid }}">
+                                        <button class="btn btn-red btn-sm" style="margin-top:5px">✕ REMOVE</button>
+                                    </a>
+                                </div>
+                                {% endfor %}
+                            </details>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <form method="POST" action="/extend/{{ key }}" class="extend-form">
+                                <input type="number" name="days" placeholder="days">
+                                <button type="submit" class="btn btn-primary btn-sm">APPLY</button>
+                            </form>
+                        </td>
+                        <td>
+                            <div class="actions">
+                                <a href="/toggle/{{ key }}">
+                                    <button class="btn btn-sm {{ 'btn-green' if is_disabled else 'btn-orange' }}">
+                                        {{ '▶ ENABLE' if is_disabled else '⏸ DISABLE' }}
+                                    </button>
+                                </a>
+                                <a href="/delete/{{ key }}" onclick="return confirm('Delete this key?')">
+                                    <button class="btn btn-red btn-sm">✕ DELETE</button>
+                                </a>
                             </div>
-                            {% endfor %}
-                        </details>
-                        {% endif %}
-                    </td>
-                    <td>
-                        <form method="POST" action="/extend/{{ key }}" class="extend-form">
-                            <input type="number" name="days" placeholder="days">
-                            <button type="submit" class="btn btn-primary btn-sm">Apply</button>
-                        </form>
-                    </td>
-                    <td>
-                        <div class="actions">
-                            <a href="/toggle/{{ key }}"><button class="btn btn-sm {{ 'btn-green' if is_disabled else 'btn-orange' }}">{{ 'Enable' if is_disabled else 'Disable' }}</button></a>
-                            <a href="/delete/{{ key }}" onclick="return confirm('Delete this key?')"><button class="btn btn-red btn-sm">Delete</button></a>
-                        </div>
-                    </td>
-                </tr>
-                {% endfor %}
-            </table>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
         </div>
     </div>
-    <div class="toast" id="toast">✓ Copied!</div>
+
+    <div class="toast" id="toast">✓ COPIED</div>
 </body>
 </html>
