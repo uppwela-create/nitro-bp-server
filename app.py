@@ -22,6 +22,25 @@ def gen_key():
     chars = string.ascii_uppercase + string.digits
     return "NITRO-" + "".join(random.choices(chars, k=4)) + "-" + "".join(random.choices(chars, k=4)) + "-" + "".join(random.choices(chars, k=4))
 
+def time_remaining(expiry_str):
+    try:
+        expiry = datetime.fromisoformat(expiry_str)
+        now = datetime.now()
+        if now > expiry:
+            return "منتهي"
+        delta = expiry - now
+        days = delta.days
+        hours, rem = divmod(delta.seconds, 3600)
+        minutes = rem // 60
+        if days > 0:
+            return f"{days} يوم {hours} ساعة"
+        elif hours > 0:
+            return f"{hours} ساعة {minutes} دقيقة"
+        else:
+            return f"{minutes} دقيقة"
+    except:
+        return "غير معروف"
+
 @app.route("/public/connect", methods=["POST"])
 def public_connect():
     import hashlib, time
@@ -78,7 +97,8 @@ def dashboard():
         return redirect("/login")
     keys = load_keys()
     now = datetime.now().isoformat()
-    return render_template("dashboard.html", keys=keys, now=now)
+    keys_with_remaining = {k: {**v, "remaining": time_remaining(v["expiry"])} for k, v in keys.items()}
+    return render_template("dashboard.html", keys=keys_with_remaining, now=now)
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
