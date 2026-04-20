@@ -230,6 +230,7 @@ details summary::-webkit-details-marker{display:none;}
     <button class="tab-btn active" onclick="switchTab('generate',this)">⬡ GENERATE</button>
     <button class="tab-btn" onclick="switchTab('add',this)">◈ ADD KEY</button>
     <button class="tab-btn" onclick="switchTab('keys',this)">▣ KEYS ({{ keys|length }})</button>
+    <button class="tab-btn" onclick="switchTab('users',this)">👤 USERS ({{ users|length }})</button>
   </div>
 
   <!-- TAB: GENERATE -->
@@ -313,9 +314,45 @@ details summary::-webkit-details-marker{display:none;}
         </table>
       </div>
     </div>
+  <!-- TAB: USERS -->
+  <div id="tab-users" class="tab-content">
+    <div class="card">
+      <div class="card-title">👤 REGISTERED USERS</div>
+      <div class="table-wrap">
+        <table>
+          <tr><th>User</th><th>Email</th><th>Provider</th><th>Joined</th><th>Key</th><th>Actions</th></tr>
+          {% for email, u in users.items() %}
+          <tr>
+            <td style="display:flex;align-items:center;gap:10px">
+              {% if u.picture %}<img src="{{ u.picture }}" style="width:28px;height:28px;border-radius:50%;border:1px solid rgba(255,255,255,0.1)">{% endif %}
+              <span style="color:#fff">{{ u.name }}</span>
+            </td>
+            <td class="key-text">{{ email }}</td>
+            <td><span class="badge badge-used">{{ u.provider|upper }}</span></td>
+            <td style="color:#555;font-size:11px">{{ u.joined[:10] }}</td>
+            <td>
+              {% if u.key %}
+                <span class="key-text" style="font-size:11px">{{ u.key }}</span>
+              {% else %}
+                <form method="POST" action="/assign_key/{{ email }}" style="display:flex;gap:6px">
+                  <input type="text" name="key" placeholder="key..." style="width:160px;padding:5px 8px;font-size:11px">
+                  <button type="submit" class="btn btn-outline btn-sm">ASSIGN</button>
+                </form>
+              {% endif %}
+            </td>
+            <td>
+              <a href="/delete_user/{{ email }}" onclick="return confirm('Delete user?')"><button class="btn btn-red btn-sm">✕ DELETE</button></a>
+            </td>
+          </tr>
+          {% else %}
+          <tr><td colspan="6" style="text-align:center;color:#444;padding:30px;letter-spacing:2px">NO USERS YET</td></tr>
+          {% endfor %}
+        </table>
+      </div>
+    </div>
   </div>
-</div>
 
+</div>
 <div class="toast" id="toast">✓ COPIED</div>
 
 <script>
@@ -378,3 +415,5 @@ function showToast(){
 </script>
 </body>
 </html>
+
+<div class="toast" id="toast">✓ COPIED</div>
