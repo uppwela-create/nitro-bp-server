@@ -5,6 +5,10 @@ from authlib.integrations.flask_client import OAuth
 
 app = Flask(__name__)
 app.secret_key = secrets.token_hex(16)
+app.config['PREFERRED_URL_SCHEME'] = 'https'
+
+from werkzeug.middleware.proxy_fix import ProxyFix
+app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 
 ADMIN_PASSWORD = "BEBO2026"
 KEYS_FILE = "/tmp/keys.json"
@@ -53,6 +57,8 @@ def time_remaining(expiry_str):
         elif hours > 0: return f"{hours}h {minutes}m"
         else: return f"{minutes}m"
     except: return "unknown"
+
+# ─── PUBLIC API ───────────────────────────────────────────────
 
 @app.route("/public/connect", methods=["POST"])
 def public_connect():
@@ -103,6 +109,8 @@ def check_key():
     keys[key]["devices"] = devices
     save_keys(keys)
     return jsonify({"valid": True, "message": "OK", "expiry": k["expiry"]})
+
+# ─── ADMIN ────────────────────────────────────────────────────
 
 @app.route("/", methods=["GET"])
 def dashboard():
@@ -210,9 +218,12 @@ def assign_key(email):
     if not session.get("admin"): return redirect("/login")
     users = load_users()
     if email in users:
-        users[email]["key"] = request.form.get("key", "")
+        key = request.form.get("key", "")
+        users[email]["key"] = key
         save_users(users)
     return redirect("/")
+
+# ─── GOOGLE AUTH ──────────────────────────────────────────────
 
 @app.route("/auth/google")
 def auth_google():
@@ -223,11 +234,21 @@ def auth_google():
 def auth_google_callback():
     token = google.authorize_access_token()
     user_info = token.get("userinfo")
-    if not user_info: return redirect("/register")
+    if not user_info:
+        return redirect("/register")
     email = user_info["email"]
+    name = user_info.get("name", email)
+    picture = user_info.get("picture", "")
     users = load_users()
     if email not in users:
-        users[email] = {"name": user_info.get("name", email), "email": email, "picture": user_info.get("picture", ""), "provider": "google", "joined": datetime.now().isoformat()[:16], "key": ""}
+        users[email] = {
+            "name": name,
+            "email": email,
+            "picture": picture,
+            "provider": "google",
+            "joined": datetime.now().isoformat()[:16],
+            "key": ""
+        }
         save_users(users)
     session["user_email"] = email
     return redirect("/user/dashboard")
