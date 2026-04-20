@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NITRO_BP | My Account</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#000;color:#fff;font-family:'Share Tech Mono',monospace;min-height:100vh;}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(255,255,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.03) 1px,transparent 1px);background-size:60px 60px;animation:gridPan 40s linear infinite;z-index:0;pointer-events:none;}
+@keyframes gridPan{to{background-position:60px 60px;}}
+.scanline{position:fixed;inset:0;z-index:999;pointer-events:none;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(255,255,255,0.012) 3px,rgba(255,255,255,0.012) 4px);}
+
+.navbar{position:sticky;top:0;z-index:100;background:rgba(0,0,0,0.96);border-bottom:1px solid rgba(255,255,255,0.08);padding:0 30px;height:60px;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(20px);}
+.navbar::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.4),transparent);background-size:200% 100%;animation:borderFlow 4s linear infinite;}
+@keyframes borderFlow{to{background-position:200% 0;}}
+.logo{font-family:'Orbitron',sans-serif;font-size:18px;font-weight:900;color:#fff;letter-spacing:4px;text-shadow:0 0 20px rgba(255,255,255,0.6);}
+
+.container{padding:30px;max-width:900px;margin:0 auto;position:relative;z-index:1;}
+
+.profile-card{
+  background:rgba(8,8,8,0.95);border:1px solid rgba(255,255,255,0.1);
+  border-radius:16px;padding:30px;margin-bottom:20px;
+  display:flex;align-items:center;gap:25px;position:relative;overflow:hidden;
+}
+.profile-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.4),transparent);}
+.avatar{width:70px;height:70px;border-radius:50%;border:2px solid rgba(255,255,255,0.2);object-fit:cover;}
+.avatar-placeholder{width:70px;height:70px;border-radius:50%;border:2px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:center;font-size:28px;}
+.profile-info h2{font-family:'Orbitron',sans-serif;font-size:16px;font-weight:700;letter-spacing:2px;margin-bottom:5px;}
+.profile-info p{font-size:11px;color:#555;letter-spacing:1px;}
+.provider-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:3px 10px;font-size:9px;color:#888;letter-spacing:1px;margin-top:8px;}
+
+.card{background:rgba(8,8,8,0.95);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:25px;margin-bottom:20px;position:relative;overflow:hidden;}
+.card::before{content:'';position:absolute;top:0;left:0;width:2px;height:100%;background:linear-gradient(180deg,transparent,rgba(255,255,255,0.4),transparent);animation:sideFlow 4s linear infinite;background-size:100% 200%;}
+@keyframes sideFlow{to{background-position:0 200%;}}
+.card-title{font-family:'Orbitron',sans-serif;font-size:10px;color:#fff;font-weight:700;margin-bottom:20px;letter-spacing:3px;display:flex;align-items:center;gap:10px;text-shadow:0 0 10px rgba(255,255,255,0.4);}
+.card-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(255,255,255,0.15),transparent);}
+
+.key-box{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:20px;text-align:center;}
+.key-val{font-family:'Share Tech Mono',monospace;font-size:18px;color:#fff;letter-spacing:3px;text-shadow:0 0 15px rgba(255,255,255,0.5);word-break:break-all;}
+.key-meta{display:flex;justify-content:center;gap:30px;margin-top:15px;flex-wrap:wrap;}
+.key-meta-item{text-align:center;}
+.key-meta-item .val{font-family:'Orbitron',sans-serif;font-size:14px;font-weight:700;color:#fff;}
+.key-meta-item .lbl{font-size:9px;color:#444;letter-spacing:2px;margin-top:3px;}
+
+.badge{padding:4px 12px;border-radius:20px;font-size:9px;font-weight:700;letter-spacing:2px;font-family:'Orbitron',sans-serif;}
+.badge-valid{background:rgba(0,255,136,0.08);color:#00ff88;border:1px solid rgba(0,255,136,0.3);}
+.badge-expired{background:rgba(255,50,70,0.08);color:#ff4455;border:1px solid rgba(255,50,70,0.3);}
+.badge-none{background:rgba(255,255,255,0.04);color:#444;border:1px solid rgba(255,255,255,0.08);}
+
+.no-key{text-align:center;padding:30px;color:#444;font-size:12px;letter-spacing:2px;}
+.no-key .icon{font-size:40px;margin-bottom:10px;opacity:0.3;}
+
+.btn{padding:10px 22px;border:none;border-radius:8px;cursor:pointer;font-family:'Orbitron',sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;transition:all 0.25s;text-decoration:none;display:inline-block;}
+.btn-outline{background:transparent;color:#fff;border:1px solid rgba(255,255,255,0.2);}
+.btn-outline:hover{background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.5);}
+.btn-red{background:rgba(255,50,70,0.1);color:#ff4455;border:1px solid rgba(255,50,70,0.2);}
+.btn-red:hover{background:rgba(255,50,70,0.2);}
+</style>
+</head>
+<body>
+<div class="scanline"></div>
+<div class="navbar">
+  <div class="logo">NITRO_BP</div>
+  <a href="/user/logout" class="btn btn-red" style="font-size:9px;padding:7px 14px;">⏻ LOGOUT</a>
+</div>
+
+<div class="container">
+  <div class="profile-card">
+    {% if user.picture %}
+    <img src="{{ user.picture }}" class="avatar" alt="avatar">
+    {% else %}
+    <div class="avatar-placeholder">👤</div>
+    {% endif %}
+    <div class="profile-info">
+      <h2>{{ user.name }}</h2>
+      <p>{{ user.email }}</p>
+      <div class="provider-badge">
+        {% if user.provider == 'google' %}🔵 GOOGLE{% else %}◈ {{ user.provider|upper }}{% endif %}
+        &nbsp;·&nbsp; JOINED {{ user.joined[:10] }}
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">◈ MY KEY</div>
+    {% if user_key and key_data %}
+      {% set is_valid = key_data.expiry > now %}
+      <div class="key-box">
+        <div class="key-val">{{ user_key }}</div>
+        <div style="margin-top:12px">
+          <span class="badge {{ 'badge-valid' if is_valid else 'badge-expired' }}">{{ 'VALID' if is_valid else 'EXPIRED' }}</span>
+        </div>
+        <div class="key-meta">
+          <div class="key-meta-item">
+            <div class="val">{{ key_data.expiry[:10] }}</div>
+            <div class="lbl">EXPIRES</div>
+          </div>
+          <div class="key-meta-item">
+            <div class="val">{{ key_data.devices|length }}/{{ key_data.get('max_devices',1) }}</div>
+            <div class="lbl">DEVICES</div>
+          </div>
+        </div>
+      </div>
+    {% else %}
+      <div class="no-key">
+        <div class="icon">🔑</div>
+        <div>NO KEY ASSIGNED</div>
+        <div style="font-size:10px;margin-top:8px;color:#333">Contact admin to get your key</div>
+      </div>
+    {% endif %}
+  </div>
+</div>
+</body>
+</html>
